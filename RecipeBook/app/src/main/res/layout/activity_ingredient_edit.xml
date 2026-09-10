@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FAF9F6">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- ヘッダー -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="#FFFFFF"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingEnd="10dp">
+
+            <!-- バックボタン -->
+            <TextView
+                android:id="@+id/backButton"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="‹"
+                android:textColor="#333333"
+                android:textSize="35sp" />
+
+            <!-- タイトル -->
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="材料追加"
+                android:textColor="#222222"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+
+        <!-- 入力エリア -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- 材料名 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="材料名"
+                android:textColor="#333333"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/ingredientNameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:hint="例：トマト"
+                android:inputType="text"
+                android:padding="12dp" />
+
+
+            <!-- カテゴリ -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="カテゴリ"
+                android:textColor="#333333"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/categoryEditText"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:hint="例：野菜"
+                android:inputType="text"
+                android:padding="12dp" />
+
+
+            <!-- メモ -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="メモ"
+                android:textColor="#333333"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/memoEditText"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:gravity="top"
+                android:hint="材料についてのメモ"
+                android:inputType="textMultiLine"
+                android:padding="12dp" />
+
+
+            <!-- 保存 -->
+            <Button
+                android:id="@+id/saveIngredientButton"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginTop="25dp"
+                android:text="保存" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

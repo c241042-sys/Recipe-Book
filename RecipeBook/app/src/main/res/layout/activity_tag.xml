@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FAF9F6">
+
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- ヘッダー -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="center_vertical"
+            android:background="#FFFFFF">
+
+            <!-- バックボタン -->
+            <TextView
+                android:id="@+id/backButton"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="‹"
+                android:textSize="35sp"
+                android:textColor="#333333" />
+
+            <!-- タイトル -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="タグ管理"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#222222" />
+
+        </LinearLayout>
+
+        <!-- 検索 -->
+        <EditText
+            android:id="@+id/searchTagEditText"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="15dp"
+            android:background="@drawable/search_background"
+            android:hint="🔍 タグを検索"
+            android:paddingStart="15dp"
+            android:singleLine="true" />
+
+        <!-- タグ一覧 -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/tagRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="10dp" />
+
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addTagButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:contentDescription="タグ追加"
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="#F28C28"
+        app:layout_anchor="@+id/linearLayout3"
+        app:layout_anchorGravity="end|bottom"
+        app:tint="#FFFFFF" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

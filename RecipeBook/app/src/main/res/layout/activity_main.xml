@@ -1,19 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:background="#FAF9F6">
 
-    <TextView
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- ヘッダー -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="center_vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="10dp"
+            android:background="#FFFFFF">
+
+            <TextView
+                android:id="@+id/titleText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Recipe Book"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#222222" />
+
+            <TextView
+                android:id="@+id/ingredientManageButton"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="材料"
+                android:textSize="14sp"
+                android:textColor="#F28C28" />
+
+            <TextView
+                android:id="@+id/tagManageButton"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="タグ"
+                android:textSize="14sp"
+                android:textColor="#F28C28" />
+
+        </LinearLayout>
+
+        <!-- 検索欄 -->
+        <EditText
+            android:id="@+id/searchEditText"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/search_background"
+            android:hint="🔍 レシピ名・タグで検索"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:singleLine="true"
+            android:textSize="14sp" />
+
+        <!-- レシピ一覧 -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recipeRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp" />
+
+    </LinearLayout>
+
+    <!-- レシピ追加ボタン -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_margin="20dp"
+        android:contentDescription="レシピを追加"
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="#F28C28"
+        app:layout_anchor="@+id/linearLayout"
+        app:layout_anchorGravity="end|bottom"
+        app:tint="#FFFFFF" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

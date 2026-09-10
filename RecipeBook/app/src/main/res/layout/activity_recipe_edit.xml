@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FAF9F6">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- ヘッダー -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/backButton"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="‹"
+                android:textSize="35sp"
+                android:textColor="#333333" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="レシピ追加"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#222222" />
+
+            <TextView
+                android:id="@+id/saveButton"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="保存"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="#F28C28" />
+
+        </LinearLayout>
+
+
+        <!-- 画像 -->
+        <ImageView
+            android:id="@+id/recipeImage"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="10dp"
+            android:background="#EEEEEE"
+            android:scaleType="centerCrop"
+            android:src="@drawable/recipe_placeholder"
+            android:contentDescription="レシピ画像" />
+
+        <Button
+            android:id="@+id/selectImageButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="画像を選択" />
+
+
+        <!-- レシピ名 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="レシピ名"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:textColor="#333333" />
+
+        <EditText
+            android:id="@+id/nameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:hint="例：トマトとバジルのパスタ"
+            android:inputType="text"
+            android:background="@android:drawable/editbox_background"
+            android:padding="12dp" />
+
+
+        <!-- 説明 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="説明"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:textColor="#333333" />
+
+        <EditText
+            android:id="@+id/descriptionEditText"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:gravity="top"
+            android:hint="レシピの説明を入力"
+            android:inputType="textMultiLine"
+            android:background="@android:drawable/editbox_background"
+            android:padding="12dp" />
+
+
+        <!-- 調理時間 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="調理時間"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:textColor="#333333" />
+
+        <Spinner
+            android:id="@+id/cookTimeSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="55dp" />
+
+    </LinearLayout>
+
+</ScrollView>

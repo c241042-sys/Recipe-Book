@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FAF9F6">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- ヘッダー -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="center_vertical"
+            android:paddingStart="10dp"
+            android:paddingEnd="15dp"
+            android:background="#FFFFFF">
+
+            <!-- 戻る -->
+            <TextView
+                android:id="@+id/backButton"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="‹"
+                android:textSize="35sp"
+                android:textColor="#333333" />
+
+            <!-- タイトル -->
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text=""
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#222222" />
+
+            <!-- お気に入り -->
+            <TextView
+                android:id="@+id/favoriteButton"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="♡"
+                android:textSize="30sp"
+                android:textColor="#E74C3C" />
+
+        </LinearLayout>
+
+
+        <!-- レシピ画像 -->
+        <ImageView
+            android:id="@+id/recipeImage"
+            android:layout_width="match_parent"
+            android:layout_height="230dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/recipe_placeholder"
+            android:contentDescription="レシピ画像" />
+
+
+        <!-- レシピ情報 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- レシピ名 -->
+            <TextView
+                android:id="@+id/recipeName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="レシピ名"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:textColor="#222222" />
+
+            <!-- 説明 -->
+            <TextView
+                android:id="@+id/recipeDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="説明"
+                android:textSize="14sp"
+                android:textColor="#555555" />
+
+            <!-- 情報 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <!-- 調理時間 -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="調理時間"
+                        android:textSize="12sp"
+                        android:textColor="#777777" />
+
+                    <TextView
+                        android:id="@+id/recipeTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="20分"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#333333" />
+
+                </LinearLayout>
+
+
+                <!-- 難易度 -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="難易度"
+                        android:textSize="12sp"
+                        android:textColor="#777777" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="－"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#333333" />
+
+                </LinearLayout>
+
+
+                <!-- 人数 -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="人数"
+                        android:textSize="12sp"
+                        android:textColor="#777777" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="－"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#333333" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <!-- 材料 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="材料"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#222222" />
+
+                <TextView
+                    android:id="@+id/addIngredientButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="+ 材料を追加"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#F28C28"
+                    android:padding="8dp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/ingredientText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="材料はまだ登録されていません"
+                android:textSize="14sp"
+                android:textColor="#666666" />
+
+            <!-- タグ -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="タグ"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#222222" />
+
+                <TextView
+                    android:id="@+id/addTagButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="+ タグを追加"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#F28C28"
+                    android:padding="8dp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tagText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="タグはまだ登録されていません"
+                android:textSize="14sp"
+                android:textColor="#666666" />
+
+
+            <!-- 作り方 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="作り方"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#222222" />
+
+                <TextView
+                    android:id="@+id/addStepButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="+ 手順を追加"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#F28C28"
+                    android:padding="8dp" />
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/stepRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:nestedScrollingEnabled="false" />
+
+            <TextView
+                android:id="@+id/stepText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="作り方はまだ登録されていません"
+                android:textSize="14sp"
+                android:textColor="#666666"
+                android:visibility="gone" />
+
+
+            <!-- ボタン -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/editButton"
+                    android:layout_width="0dp"
+                    android:layout_height="55dp"
+                    android:layout_weight="1"
+                    android:text="編集" />
+
+                <Button
+                    android:id="@+id/deleteButton"
+                    android:layout_width="0dp"
+                    android:layout_height="55dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:text="削除" />
+
+                <Button
+                    android:id="@+id/cookButton"
+                    android:layout_width="0dp"
+                    android:layout_height="55dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:text="作る" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

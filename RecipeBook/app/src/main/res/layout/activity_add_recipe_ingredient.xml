@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FAF9F6">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:gravity="center_vertical"
+        android:background="#FFFFFF">
+
+        <TextView
+            android:id="@+id/backButton"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="‹"
+            android:textSize="35sp"
+            android:textColor="#333333" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="材料を追加"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#222222" />
+
+    </LinearLayout>
+
+    <!-- 材料検索 -->
+    <EditText
+        android:id="@+id/searchIngredientEditText"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_margin="15dp"
+        android:hint="🔍 材料を検索"
+        android:singleLine="true"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:background="@drawable/search_background" />
+
+
+    <!-- 材料一覧 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/ingredientRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="10dp" />
+
+</LinearLayout>

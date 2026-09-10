@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:padding="12dp"
+    android:orientation="horizontal"
+    android:background="#FFFFFF">
+
+    <!-- 手順番号 -->
+    <TextView
+        android:id="@+id/stepNumber"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:gravity="center"
+        android:text="1"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:background="#F28C28" />
+
+    <!-- 内容 -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingStart="12dp">
+
+        <TextView
+            android:id="@+id/stepTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="野菜を切る"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:textColor="#222222" />
+
+        <TextView
+            android:id="@+id/stepDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="トマトと玉ねぎを食べやすい大きさに切る。"
+            android:textSize="13sp"
+            android:textColor="#666666"
+            android:maxLines="3"
+            android:ellipsize="end" />
+
+        <TextView
+            android:id="@+id/stepTimer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="タイマー 5分"
+            android:textSize="12sp"
+            android:textColor="#F28C28" />
+
+    </LinearLayout>
+
+</LinearLayout>

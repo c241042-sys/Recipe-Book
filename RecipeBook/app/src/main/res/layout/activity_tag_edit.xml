@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FAF9F6">
+
+    <!-- ヘッダー -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:gravity="center_vertical"
+        android:background="#FFFFFF">
+
+        <!-- バックボタン -->
+        <TextView
+            android:id="@+id/backButton"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="‹"
+            android:textSize="35sp"
+            android:textColor="#333333" />
+
+        <!-- タイトル -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="タグ追加"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#222222" />
+
+    </LinearLayout>
+
+    <!-- 入力エリア -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <EditText
+            android:id="@+id/tagNameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="5dp"
+            android:hint="例：パスタ"
+            android:singleLine="true"
+            android:padding="12dp" />
+
+        <Button
+            android:id="@+id/saveTagButton"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="20dp"
+            android:text="保存" />
+
+    </LinearLayout>
+
+</LinearLayout>

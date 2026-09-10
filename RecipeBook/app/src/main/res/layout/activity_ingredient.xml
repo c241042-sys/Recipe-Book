@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FAF9F6">
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- ヘッダー -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="#FFFFFF"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!-- バックボタン -->
+            <TextView
+                android:id="@+id/backButton"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="‹"
+                android:textColor="#333333"
+                android:textSize="35sp" />
+
+            <!-- タイトル -->
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="材料管理"
+                android:textColor="#222222"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- 検索 -->
+        <EditText
+            android:id="@+id/searchIngredientEditText"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="15dp"
+            android:background="@drawable/search_background"
+            android:hint="🔍 材料を検索"
+            android:paddingStart="15dp"
+            android:singleLine="true" />
+
+        <!-- 材料一覧 -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/ingredientRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="10dp" />
+
+    </LinearLayout>
+
+    <!-- 材料追加 -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addIngredientButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:contentDescription="材料追加"
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="#F28C28"
+        app:layout_anchor="@+id/linearLayout2"
+        app:layout_anchorGravity="end|bottom"
+        app:tint="#FFFFFF" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,0 +1,4 @@
+package activity
+
+class FavoriteActivity {
+}

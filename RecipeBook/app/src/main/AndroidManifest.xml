@@ -11,6 +11,43 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RecipeBook">
+
+        <activity
+            android:name=".RecipeDetailActivity"
+            android:exported="false" />
+
+        <activity
+            android:name="activity.RecipeEditActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".IngredientActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".AddRecipeIngredientActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".TagActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".TagEditActivity"
+            android:exported="false" />
+
+        <activity
+            android:name="activity.IngredientEditActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".AddRecipeTagActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".StepEditActivity"
+            android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
