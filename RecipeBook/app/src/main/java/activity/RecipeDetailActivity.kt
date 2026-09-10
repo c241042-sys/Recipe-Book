@@ -168,11 +168,18 @@ class RecipeDetailActivity : AppCompatActivity() {
             R.id.cookButton
         ).setOnClickListener {
 
-            Toast.makeText(
-                this,
-                "調理画面は次に実装します",
-                Toast.LENGTH_SHORT
-            ).show()
+            val intent =
+                Intent(
+                    this,
+                    CookingActivity::class.java
+                )
+
+            intent.putExtra(
+                "recipe_id",
+                recipeId
+            )
+
+            startActivity(intent)
         }
 
 

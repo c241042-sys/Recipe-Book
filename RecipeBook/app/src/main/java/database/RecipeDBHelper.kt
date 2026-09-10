@@ -627,8 +627,8 @@ class RecipeDBHelper(context: Context) :
     }
 
     // =========================
-// 手順追加
-// =========================
+    // 手順追加
+    // =========================
     fun insertStep(
         recipeId: Int,
         stepNumber: Int,
@@ -661,8 +661,8 @@ class RecipeDBHelper(context: Context) :
     }
 
     // =========================
-// レシピの手順一覧取得
-// =========================
+    // レシピの手順一覧取得
+    // =========================
     fun getStepsByRecipeId(
         recipeId: Int
     ): MutableList<Step> {
@@ -739,8 +739,8 @@ class RecipeDBHelper(context: Context) :
     }
 
     // =========================
-// 次の手順番号
-// =========================
+    // 次の手順番号
+    // =========================
     fun getNextStepNumber(
         recipeId: Int
     ): Int {
@@ -768,5 +768,33 @@ class RecipeDBHelper(context: Context) :
         }
 
         return 1
+    }
+
+    // =========================
+    // 調理履歴保存
+    // =========================
+    fun insertCookingHistory(
+        recipeId: Int,
+        startTime: String,
+        finishTime: String,
+        elapsedTime: Int,
+        comment: String
+    ): Long {
+
+        val db = writableDatabase
+
+        val values = ContentValues().apply {
+            put("recipe_id", recipeId)
+            put("start_time", startTime)
+            put("finish_time", finishTime)
+            put("elapsed_time", elapsedTime)
+            put("comment", comment)
+        }
+
+        return db.insert(
+            "cooking_history",
+            null,
+            values
+        )
     }
 }

@@ -1,6 +1,198 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FAF9F6">
+
+    <!-- ヘッダー -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:gravity="center_vertical"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:background="#FFFFFF">
+
+        <TextView
+            android:id="@+id/backButton"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="‹"
+            android:textSize="35sp"
+            android:textColor="#333333" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="調理中"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#222222" />
+
+        <TextView
+            android:id="@+id/exitButton"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="終了"
+            android:textSize="14sp"
+            android:textColor="#E74C3C" />
+
+    </LinearLayout>
+
+
+    <!-- メイン -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- 手順番号 -->
+            <TextView
+                android:id="@+id/stepCounter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="手順 1 / 4"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#F28C28" />
+
+
+            <!-- 手順画像 -->
+            <ImageView
+                android:id="@+id/stepImage"
+                android:layout_width="match_parent"
+                android:layout_height="230dp"
+                android:layout_marginTop="20dp"
+                android:background="#EEEEEE"
+                android:scaleType="centerCrop"
+                android:src="@drawable/recipe_placeholder"
+                android:contentDescription="手順画像" />
+
+
+            <!-- タイトル -->
+            <TextView
+                android:id="@+id/stepTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="野菜を切る"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:textColor="#222222" />
+
+
+            <!-- 説明 -->
+            <TextView
+                android:id="@+id/stepDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="トマトと玉ねぎを食べやすい大きさに切ります。"
+                android:textSize="16sp"
+                android:textColor="#555555" />
+
+
+            <!-- タイマー -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/timerText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="05:00"
+                    android:textSize="40sp"
+                    android:textStyle="bold"
+                    android:textColor="#333333" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp">
+
+                    <Button
+                        android:id="@+id/startTimerButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="45dp"
+                        android:text="開始" />
+
+                    <Button
+                        android:id="@+id/resetTimerButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="45dp"
+                        android:layout_marginStart="8dp"
+                        android:text="リセット" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <!-- 進捗 -->
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="12dp"
+                android:layout_marginTop="30dp"
+                android:max="100"
+                android:progress="25" />
+
+            <TextView
+                android:id="@+id/progressText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:text="25%"
+                android:textSize="14sp"
+                android:textColor="#666666" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+    <!-- 下部ボタン -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:padding="10dp"
+        android:background="#FFFFFF">
+
+        <Button
+            android:id="@+id/previousButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="← 戻る" />
+
+        <Button
+            android:id="@+id/nextButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:text="次へ →" />
+
+    </LinearLayout>
+
+</LinearLayout>
