@@ -47,7 +47,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="♡"
-                android:textSize="30sp"
+                android:textSize="27.5sp"
                 android:textColor="#E74C3C" />
 
         </LinearLayout>
@@ -76,9 +76,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="レシピ名"
+                android:textColor="#222222"
                 android:textSize="25sp"
-                android:textStyle="bold"
-                android:textColor="#222222" />
+                android:textStyle="bold" />
 
             <!-- 説明 -->
             <TextView
@@ -87,8 +87,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="説明"
-                android:textSize="14sp"
-                android:textColor="#555555" />
+                android:textColor="#555555"
+                android:textSize="14sp" />
 
             <!-- 情報 -->
             <LinearLayout
@@ -102,15 +102,15 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="調理時間"
-                        android:textSize="12sp"
-                        android:textColor="#777777" />
+                        android:textColor="#777777"
+                        android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/recipeTime"
@@ -118,9 +118,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:text="20分"
+                        android:textColor="#333333"
                         android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="#333333" />
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
@@ -130,24 +130,24 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="難易度"
-                        android:textSize="12sp"
-                        android:textColor="#777777" />
+                        android:textColor="#777777"
+                        android:textSize="12sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:text="－"
+                        android:textColor="#333333"
                         android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="#333333" />
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
@@ -157,24 +157,24 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="人数"
-                        android:textSize="12sp"
-                        android:textColor="#777777" />
+                        android:textColor="#777777"
+                        android:textSize="12sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:text="－"
+                        android:textColor="#333333"
                         android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="#333333" />
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
@@ -193,30 +193,39 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="材料"
+                    android:textColor="#222222"
                     android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="#222222" />
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/addIngredientButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:padding="8dp"
                     android:text="+ 材料を追加"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
                     android:textColor="#F28C28"
-                    android:padding="8dp" />
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
+            <!-- 材料 -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/ingredientRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:nestedScrollingEnabled="false" />
+
             <TextView
-                android:id="@+id/ingredientText"
+                android:id="@+id/ingredientEmptyText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="材料はまだ登録されていません"
+                android:textColor="#666666"
                 android:textSize="14sp"
-                android:textColor="#666666" />
+                android:visibility="gone" />
 
             <!-- タグ -->
             <LinearLayout
@@ -230,30 +239,38 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="タグ"
+                    android:textColor="#222222"
                     android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="#222222" />
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/addTagButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:padding="8dp"
                     android:text="+ タグを追加"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
                     android:textColor="#F28C28"
-                    android:padding="8dp" />
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/tagRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginTop="10dp"
+                android:nestedScrollingEnabled="false" />
+
             <TextView
-                android:id="@+id/tagText"
+                android:id="@+id/tagEmptyText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="タグはまだ登録されていません"
                 android:textSize="14sp"
-                android:textColor="#666666" />
+                android:textColor="#666666"
+                android:visibility="gone" />
 
 
             <!-- 作り方 -->
@@ -268,19 +285,19 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="作り方"
+                    android:textColor="#222222"
                     android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="#222222" />
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/addStepButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:padding="8dp"
                     android:text="+ 手順を追加"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
                     android:textColor="#F28C28"
-                    android:padding="8dp" />
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
@@ -297,8 +314,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="作り方はまだ登録されていません"
-                android:textSize="14sp"
                 android:textColor="#666666"
+                android:textSize="14sp"
                 android:visibility="gone" />
 
 
@@ -320,16 +337,16 @@
                     android:id="@+id/deleteButton"
                     android:layout_width="0dp"
                     android:layout_height="55dp"
-                    android:layout_weight="1"
                     android:layout_marginStart="8dp"
+                    android:layout_weight="1"
                     android:text="削除" />
 
                 <Button
                     android:id="@+id/cookButton"
                     android:layout_width="0dp"
                     android:layout_height="55dp"
-                    android:layout_weight="1"
                     android:layout_marginStart="8dp"
+                    android:layout_weight="1"
                     android:text="作る" />
 
             </LinearLayout>

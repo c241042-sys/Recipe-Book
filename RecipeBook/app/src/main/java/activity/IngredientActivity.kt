@@ -1,6 +1,5 @@
 package com.example.recipebook
 
-import activity.IngredientEditActivity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.EditText
@@ -43,7 +42,21 @@ class IngredientActivity : AppCompatActivity() {
         adapter =
             IngredientAdapter(
                 ingredientList
-            )
+            ) { ingredient ->
+
+                val intent =
+                    Intent(
+                        this,
+                        IngredientEditActivity::class.java
+                    )
+
+                intent.putExtra(
+                    "ingredient_id",
+                    ingredient.id
+                )
+
+                startActivity(intent)
+            }
 
         recyclerView.adapter =
             adapter

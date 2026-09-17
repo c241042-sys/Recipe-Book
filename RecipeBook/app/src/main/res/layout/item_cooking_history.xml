@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:padding="15dp"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <!-- レシピ名 -->
+    <TextView
+        android:id="@+id/historyRecipeName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="トマトとバジルのパスタ"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#222222" />
+
+    <!-- 開始時間 -->
+    <TextView
+        android:id="@+id/historyStartTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="開始：2026-09-17 12:10:00"
+        android:textSize="13sp"
+        android:textColor="#666666" />
+
+    <!-- 終了時間 -->
+    <TextView
+        android:id="@+id/historyFinishTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:text="終了：2026-09-17 12:42:00"
+        android:textSize="13sp"
+        android:textColor="#666666" />
+
+    <!-- 経過時間 -->
+    <TextView
+        android:id="@+id/historyElapsedTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="調理時間：32分"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="#F28C28" />
+
+    <!-- コメント -->
+    <TextView
+        android:id="@+id/historyComment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text=""
+        android:textSize="13sp"
+        android:textColor="#777777"
+        android:visibility="gone" />
+
+</LinearLayout>

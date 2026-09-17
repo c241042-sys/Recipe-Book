@@ -34,7 +34,7 @@
 
             <TextView
                 android:id="@+id/ingredientManageButton"
-                android:layout_width="80dp"
+                android:layout_width="60dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="材料"
@@ -47,8 +47,26 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="タグ"
+                android:textColor="#F28C28"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/historyButton"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="履歴"
                 android:textSize="14sp"
                 android:textColor="#F28C28" />
+
+            <TextView
+                android:id="@+id/favoriteManageButton"
+                android:layout_width="90dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="お気に入り"
+                android:textSize="12sp"
+                android:textColor="#E74C3C" />
 
         </LinearLayout>
 

@@ -1,15 +1,18 @@
-package com.example.recipebook
+package adapter
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.recipebook.R
+import com.example.recipebook.RecipeIngredient
 
-class IngredientAdapter(
-    private var ingredientList: List<Ingredient>,
-    private val onItemClick: (Ingredient) -> Unit
-) : RecyclerView.Adapter<IngredientAdapter.IngredientViewHolder>() {
+class RecipeDetailIngredientAdapter(
+    private var ingredientList: List<RecipeIngredient>,
+    private val onClick: (RecipeIngredient) -> Unit,
+    private val onLongClick: (RecipeIngredient) -> Unit
+) : RecyclerView.Adapter<RecipeDetailIngredientAdapter.IngredientViewHolder>() {
 
     class IngredientViewHolder(
         itemView: View
@@ -20,9 +23,9 @@ class IngredientAdapter(
                 R.id.ingredientName
             )
 
-        val category: TextView =
+        val amount: TextView =
             itemView.findViewById(
-                R.id.ingredientCategory
+                R.id.ingredientAmount
             )
     }
 
@@ -34,7 +37,7 @@ class IngredientAdapter(
         val view =
             LayoutInflater.from(parent.context)
                 .inflate(
-                    R.layout.item_ingredient,
+                    R.layout.item_recipe_detail_ingredient,
                     parent,
                     false
                 )
@@ -51,23 +54,31 @@ class IngredientAdapter(
             ingredientList[position]
 
         holder.name.text =
-            ingredient.name
+            ingredient.ingredientName
 
-        holder.category.text =
-            ingredient.category
+        holder.amount.text =
+            ingredient.amount
 
         holder.itemView.setOnClickListener {
 
-            onItemClick(ingredient)
+            onClick(ingredient)
+        }
+
+        holder.itemView.setOnLongClickListener {
+
+            onLongClick(ingredient)
+
+            true
         }
     }
 
     override fun getItemCount(): Int {
+
         return ingredientList.size
     }
 
     fun updateList(
-        newList: List<Ingredient>
+        newList: List<RecipeIngredient>
     ) {
 
         ingredientList =

@@ -7,7 +7,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class StepAdapter(
-    private var stepList: List<Step>
+    private var stepList: List<Step>,
+    private val onItemClick: (Step) -> Unit
 ) : RecyclerView.Adapter<StepAdapter.StepViewHolder>() {
 
     class StepViewHolder(
@@ -80,6 +81,13 @@ class StepAdapter(
 
             holder.timer.text =
                 "タイマーなし"
+        }
+
+
+        // タップで編集
+        holder.itemView.setOnClickListener {
+
+            onItemClick(step)
         }
     }
 

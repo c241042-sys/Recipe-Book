@@ -6,5 +6,6 @@ data class Recipe(
     val description: String,
     val cookTime: Int,
     val imageUri: String?,
+    val favorite: Boolean = false,
     val tags: List<String> = emptyList()
 )

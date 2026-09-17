@@ -6,11 +6,13 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipebook.database.RecipeDBHelper
 import kotlin.jvm.java
+import androidx.appcompat.app.AlertDialog
 
 class TagActivity : AppCompatActivity() {
 
@@ -22,6 +24,57 @@ class TagActivity : AppCompatActivity() {
 
     private var tagList =
         mutableListOf<Tag>()
+
+    private fun showDeleteDialog(
+        tag: Tag
+    ) {
+
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("タグを削除しますか？")
+            .setMessage(
+                "#${tag.name}を削除します。"
+            )
+            .setNegativeButton(
+                "キャンセル",
+                null
+            )
+            .setPositiveButton(
+                "削除"
+            ) { _, _ ->
+
+                deleteTag(tag)
+            }
+            .show()
+    }
+
+    private fun deleteTag(
+        tag: Tag
+    ) {
+
+        val result =
+            dbHelper.deleteTag(
+                tag.id
+            )
+
+        if (result) {
+
+            Toast.makeText(
+                this,
+                "#${tag.name}を削除しました",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            loadTags()
+
+        } else {
+
+            Toast.makeText(
+                this,
+                "削除に失敗しました",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +100,10 @@ class TagActivity : AppCompatActivity() {
         adapter =
             TagAdapter(
                 tagList
-            )
+            ) { tag ->
+
+                showDeleteDialog(tag)
+            }
 
         recyclerView.adapter =
             adapter

@@ -1,16 +1,20 @@
 package com.example.recipebook
 
+import adapter.RecipeDetailIngredientAdapter
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.example.recipebook.database.RecipeDBHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.recipebook.database.RecipeDBHelper
 
 class RecipeDetailActivity : AppCompatActivity() {
 
@@ -23,8 +27,125 @@ class RecipeDetailActivity : AppCompatActivity() {
     private lateinit var recipeDescription: TextView
     private lateinit var recipeTime: TextView
     private lateinit var favoriteButton: TextView
-    private lateinit var ingredientText: TextView
     private lateinit var stepAdapter: StepAdapter
+
+    // =========================
+    // 削除
+    // =========================
+    private fun showDeleteDialog() {
+
+        AlertDialog.Builder(this)
+            .setTitle("レシピを削除しますか？")
+            .setMessage(
+                "このレシピ、材料との関連付け、タグとの関連付け、手順、調理履歴も削除されます。"
+            )
+            .setNegativeButton(
+                "キャンセル",
+                null
+            )
+            .setPositiveButton(
+                "削除"
+            ) { _, _ ->
+
+                deleteRecipe()
+            }
+            .show()
+    }
+
+    private fun deleteRecipe() {
+
+        val result =
+            dbHelper.deleteRecipe(
+                recipeId
+            )
+
+        if (result) {
+
+            Toast.makeText(
+                this,
+                "レシピを削除しました",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            finish()
+
+        } else {
+
+            Toast.makeText(
+                this,
+                "削除に失敗しました",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    // =========================
+    // お気に入り
+    // =========================
+    private fun updateFavoriteButton(
+        favorite: Boolean
+    ) {
+
+        favoriteButton.text =
+            if (favorite) {
+                "♥"
+            } else {
+                "♡"
+            }
+    }
+
+    private fun toggleFavorite() {
+
+        val currentFavorite =
+            dbHelper.isFavorite(recipeId)
+
+        val newFavorite =
+            !currentFavorite
+
+        val result =
+            dbHelper.updateFavorite(
+                recipeId = recipeId,
+                favorite = newFavorite
+            )
+
+        if (result > 0) {
+
+            updateFavoriteButton(
+                newFavorite
+            )
+
+            if (newFavorite) {
+
+                Toast.makeText(
+                    this,
+                    "お気に入りに追加しました",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+            } else {
+
+                Toast.makeText(
+                    this,
+                    "お気に入りから削除しました",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+
+        } else {
+
+            Toast.makeText(
+                this,
+                "更新に失敗しました",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    private lateinit var ingredientAdapter:
+            RecipeDetailIngredientAdapter
+
+    private lateinit var tagAdapter:
+            RecipeDetailTagAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,10 +193,6 @@ class RecipeDetailActivity : AppCompatActivity() {
         favoriteButton =
             findViewById(R.id.favoriteButton)
 
-        ingredientText =
-            findViewById(R.id.ingredientText)
-
-
         // =========================
         // 作り方RecyclerView
         // =========================
@@ -86,21 +203,34 @@ class RecipeDetailActivity : AppCompatActivity() {
             )
 
         stepAdapter =
-            StepAdapter(emptyList())
+            StepAdapter(
+                emptyList()
+            ) { step ->
+
+                val intent =
+                    Intent(
+                        this,
+                        StepEditActivity::class.java
+                    )
+
+                intent.putExtra(
+                    "recipe_id",
+                    recipeId
+                )
+
+                intent.putExtra(
+                    "step_id",
+                    step.id
+                )
+
+                startActivity(intent)
+            }
 
         stepRecyclerView.adapter =
             stepAdapter
 
         stepRecyclerView.layoutManager =
             LinearLayoutManager(this)
-
-
-        // =========================
-        // レシピ表示
-        // =========================
-
-        loadRecipe()
-
 
         // =========================
         // 戻る
@@ -113,20 +243,14 @@ class RecipeDetailActivity : AppCompatActivity() {
             finish()
         }
 
-
         // =========================
         // お気に入り
         // =========================
 
         favoriteButton.setOnClickListener {
 
-            Toast.makeText(
-                this,
-                "お気に入り機能は次に実装します",
-                Toast.LENGTH_SHORT
-            ).show()
+            toggleFavorite()
         }
-
 
         // =========================
         // 編集
@@ -136,13 +260,19 @@ class RecipeDetailActivity : AppCompatActivity() {
             R.id.editButton
         ).setOnClickListener {
 
-            Toast.makeText(
-                this,
-                "編集機能は次に実装します",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
+            val intent =
+                Intent(
+                    this,
+                    RecipeEditActivity::class.java
+                )
 
+            intent.putExtra(
+                "recipe_id",
+                recipeId
+            )
+
+            startActivity(intent)
+        }
 
         // =========================
         // 削除
@@ -152,13 +282,8 @@ class RecipeDetailActivity : AppCompatActivity() {
             R.id.deleteButton
         ).setOnClickListener {
 
-            Toast.makeText(
-                this,
-                "削除機能は次に実装します",
-                Toast.LENGTH_SHORT
-            ).show()
+            showDeleteDialog()
         }
-
 
         // =========================
         // 作る
@@ -182,9 +307,8 @@ class RecipeDetailActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-
         // =========================
-        // 材料追加
+        // 材料
         // =========================
 
         findViewById<TextView>(
@@ -205,9 +329,41 @@ class RecipeDetailActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        // 材料編集
+        val ingredientRecyclerView =
+            findViewById<RecyclerView>(
+                R.id.ingredientRecyclerView
+            )
+
+        ingredientAdapter =
+            RecipeDetailIngredientAdapter(
+                emptyList(),
+
+                // タップ → 分量編集
+                { ingredient ->
+
+                    showEditIngredientAmountDialog(
+                        ingredient
+                    )
+                },
+
+                // 長押し → 削除
+                { ingredient ->
+
+                    showDeleteIngredientDialog(
+                        ingredient
+                    )
+                }
+            )
+
+        ingredientRecyclerView.adapter =
+            ingredientAdapter
+
+        ingredientRecyclerView.layoutManager =
+            LinearLayoutManager(this)
 
         // =========================
-        // タグ追加
+        // タグ
         // =========================
 
         findViewById<TextView>(
@@ -228,6 +384,28 @@ class RecipeDetailActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        val tagRecyclerView =
+            findViewById<RecyclerView>(
+                R.id.tagRecyclerView
+            )
+
+        tagAdapter =
+            RecipeDetailTagAdapter(
+                emptyList()
+            ) { tag ->
+
+                showDeleteTagDialog(tag)
+            }
+
+        tagRecyclerView.adapter =
+            tagAdapter
+
+        tagRecyclerView.layoutManager =
+            LinearLayoutManager(
+                this,
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
 
         // =========================
         // 手順追加
@@ -250,8 +428,13 @@ class RecipeDetailActivity : AppCompatActivity() {
 
             startActivity(intent)
         }
-    }
 
+        // =========================
+        // レシピ表示
+        // =========================
+
+        loadRecipe()
+    }
 
     private fun loadRecipe() {
 
@@ -272,7 +455,6 @@ class RecipeDetailActivity : AppCompatActivity() {
             return
         }
 
-
         // =========================
         // 名前
         // =========================
@@ -280,14 +462,12 @@ class RecipeDetailActivity : AppCompatActivity() {
         recipeName.text =
             recipe.name
 
-
-        // =========================
+        // ========================
         // 説明
         // =========================
 
         recipeDescription.text =
             recipe.description
-
 
         // =========================
         // 調理時間
@@ -295,7 +475,6 @@ class RecipeDetailActivity : AppCompatActivity() {
 
         recipeTime.text =
             "${recipe.cookTime}分"
-
 
         // =========================
         // 画像
@@ -314,54 +493,62 @@ class RecipeDetailActivity : AppCompatActivity() {
             )
         }
 
-
         // =========================
         // 材料
         // =========================
 
         val ingredients =
-            dbHelper.getIngredientsByRecipeId(               recipeId
+            dbHelper.getIngredientsByRecipeId(
+                recipeId
+            )
+
+        ingredientAdapter.updateList(
+            ingredients
+        )
+
+        val ingredientEmptyText =
+            findViewById<TextView>(
+                R.id.ingredientEmptyText
             )
 
         if (ingredients.isEmpty()) {
 
-            ingredientText.text =
-                "材料はまだ登録されていません"
+            ingredientEmptyText.visibility =
+                View.VISIBLE
 
         } else {
 
-            ingredientText.text =
-                ingredients.joinToString("\n") {
-
-                    "${it.ingredientName}    ${it.amount}"
-                }
+            ingredientEmptyText.visibility =
+                View.GONE
         }
 
         // =========================
         // タグ
         // =========================
 
-        val tagText =
-            findViewById<TextView>(
-                R.id.tagText
-            )
-
         val tags =
             dbHelper.getTagsByRecipeId(
                 recipeId
             )
 
+        tagAdapter.updateList(
+            tags
+        )
+
+        val tagEmptyText =
+            findViewById<TextView>(
+                R.id.tagEmptyText
+            )
+
         if (tags.isEmpty()) {
 
-            tagText.text =
-                "タグはまだ登録されていません"
+            tagEmptyText.visibility =
+                View.VISIBLE
 
         } else {
 
-            tagText.text =
-                tags.joinToString("   ") {
-                    "#${it.name}"
-                }
+            tagEmptyText.visibility =
+                View.GONE
         }
 
         // =========================
@@ -395,6 +582,15 @@ class RecipeDetailActivity : AppCompatActivity() {
             stepText.visibility =
                 android.view.View.GONE
         }
+
+        // =========================
+        // お気に入り状態
+        // =========================
+
+        val favorite =
+            dbHelper.isFavorite(recipeId)
+
+        updateFavoriteButton(favorite)
     }
 
     override fun onResume() {
@@ -404,4 +600,198 @@ class RecipeDetailActivity : AppCompatActivity() {
             loadRecipe()
         }
     }
+
+    // =========================
+    //　分量編集
+    // =========================
+    private fun showEditIngredientAmountDialog(
+        ingredient: RecipeIngredient
+    ) {
+
+        val input =
+            EditText(this)
+
+        input.setText(
+            ingredient.amount
+        )
+
+        input.setSingleLine(true)
+
+        input.hint =
+            "例：200g、2個、大さじ1"
+
+
+        val dialog =
+            AlertDialog.Builder(this)
+                .setTitle(
+                    "${ingredient.ingredientName}の分量"
+                )
+                .setView(input)
+                .setNegativeButton(
+                    "キャンセル",
+                    null
+                )
+                .setPositiveButton(
+                    "保存",
+                    null
+                )
+                .create()
+
+
+        dialog.setOnShowListener {
+
+            dialog.getButton(
+                AlertDialog.BUTTON_POSITIVE
+            ).setOnClickListener {
+
+                val amount =
+                    input.text
+                        .toString()
+                        .trim()
+
+                if (amount.isEmpty()) {
+
+                    input.error =
+                        "分量を入力してください"
+
+                    return@setOnClickListener
+                }
+
+
+                val result =
+                    dbHelper.updateRecipeIngredientAmount(
+                        recipeId = recipeId,
+                        ingredientId =
+                            ingredient.ingredientId,
+                        amount = amount
+                    )
+
+
+                if (result > 0) {
+
+                    dialog.dismiss()
+
+                    loadRecipe()
+
+                    Toast.makeText(
+                        this,
+                        "分量を更新しました",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                } else {
+
+                    Toast.makeText(
+                        this,
+                        "更新に失敗しました",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+
+        dialog.show()
+    }
+
+    // =========================
+    //　材料削除
+    // =========================
+    private fun showDeleteIngredientDialog(
+        ingredient: RecipeIngredient
+    ) {
+
+        AlertDialog.Builder(this)
+            .setTitle(
+                "材料を削除しますか？"
+            )
+            .setMessage(
+                "${ingredient.ingredientName}をこのレシピから削除します。"
+            )
+            .setNegativeButton(
+                "キャンセル",
+                null
+            )
+            .setPositiveButton(
+                "削除"
+            ) { _, _ ->
+
+                val result =
+                    dbHelper.deleteIngredientFromRecipe(
+                        recipeId = recipeId,
+                        ingredientId =
+                            ingredient.ingredientId
+                    )
+
+                if (result > 0) {
+
+                    loadRecipe()
+
+                    Toast.makeText(
+                        this,
+                        "材料を削除しました",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                } else {
+
+                    Toast.makeText(
+                        this,
+                        "削除に失敗しました",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            .show()
+    }
+
+    // =========================
+    //　タグ削除
+    // =========================
+    private fun showDeleteTagDialog(
+        tag: RecipeTag
+    ) {
+
+        AlertDialog.Builder(this)
+            .setTitle(
+                "タグを削除しますか？"
+            )
+            .setMessage(
+                "#${tag.name}をこのレシピから削除します。"
+            )
+            .setNegativeButton(
+                "キャンセル",
+                null
+            )
+            .setPositiveButton(
+                "削除"
+            ) { _, _ ->
+
+                val result =
+                    dbHelper.deleteTagFromRecipe(
+                        recipeId = recipeId,
+                        tagId = tag.id
+                    )
+
+                if (result > 0) {
+
+                    loadRecipe()
+
+                    Toast.makeText(
+                        this,
+                        "タグを削除しました",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                } else {
+
+                    Toast.makeText(
+                        this,
+                        "削除に失敗しました",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            .show()
+    }
 }
+

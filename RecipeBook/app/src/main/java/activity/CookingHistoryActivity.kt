@@ -1,7 +1,5 @@
 package com.example.recipebook
 
-import adapter.RecipeAdapter
-import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -9,16 +7,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipebook.database.RecipeDBHelper
 
-class FavoriteActivity : AppCompatActivity() {
+class CookingHistoryActivity : AppCompatActivity() {
 
     private lateinit var dbHelper: RecipeDBHelper
 
-    private lateinit var adapter: RecipeAdapter
+    private lateinit var adapter: CookingHistoryAdapter
 
     private lateinit var emptyText: TextView
 
-    private var recipeList =
-        mutableListOf<Recipe>()
+    private var historyList =
+        mutableListOf<CookingHistory>()
 
     override fun onCreate(
         savedInstanceState: Bundle?
@@ -26,43 +24,28 @@ class FavoriteActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(
-            R.layout.activity_favorite
+            R.layout.activity_cooking_history
         )
 
         dbHelper =
             RecipeDBHelper(this)
-
-
-        val recyclerView =
-            findViewById<RecyclerView>(
-                R.id.favoriteRecyclerView
-            )
 
         emptyText =
             findViewById(
                 R.id.emptyText
             )
 
+        val recyclerView =
+            findViewById<RecyclerView>(
+                R.id.historyRecyclerView
+            )
 
+
+        // Adapter
         adapter =
-            RecipeAdapter(
-                recipeList
-            ) { recipe ->
-
-                val intent =
-                    Intent(
-                        this,
-                        RecipeDetailActivity::class.java
-                    )
-
-                intent.putExtra(
-                    "recipe_id",
-                    recipe.id
-                )
-
-                startActivity(intent)
-            }
-
+            CookingHistoryAdapter(
+                historyList
+            )
 
         recyclerView.adapter =
             adapter
@@ -84,22 +67,21 @@ class FavoriteActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        loadFavoriteRecipes()
+        loadHistories()
     }
 
 
-    private fun loadFavoriteRecipes() {
+    private fun loadHistories() {
 
-        recipeList =
-            dbHelper.getFavoriteRecipes()
+        historyList =
+            dbHelper.getAllCookingHistories()
 
         adapter.updateList(
-            recipeList
+            historyList
         )
 
 
-        // 0件ならメッセージ
-        if (recipeList.isEmpty()) {
+        if (historyList.isEmpty()) {
 
             emptyText.visibility =
                 TextView.VISIBLE

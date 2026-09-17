@@ -29,8 +29,11 @@
                 android:textColor="#333333" />
 
             <TextView
-                android:layout_width="match_parent"
+                android:id="@+id/screenTitle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
                 android:text="手順追加"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -137,6 +140,15 @@
             android:layout_height="55dp"
             android:layout_marginTop="25dp"
             android:text="保存" />
+
+        <Button
+            android:id="@+id/deleteStepButton"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="10dp"
+            android:text="手順を削除"
+            android:textColor="#E74C3C"
+            android:visibility="gone" />
 
     </LinearLayout>
 

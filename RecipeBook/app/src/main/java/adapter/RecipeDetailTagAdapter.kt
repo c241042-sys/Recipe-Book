@@ -6,10 +6,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class TagAdapter(
-    private var tagList: List<Tag>,
-    private val onLongClick: (Tag) -> Unit
-) : RecyclerView.Adapter<TagAdapter.TagViewHolder>() {
+class RecipeDetailTagAdapter(
+    private var tagList: List<RecipeTag>,
+    private val onLongClick: (RecipeTag) -> Unit
+) : RecyclerView.Adapter<RecipeDetailTagAdapter.TagViewHolder>() {
 
     class TagViewHolder(
         itemView: View
@@ -29,7 +29,7 @@ class TagAdapter(
         val view =
             LayoutInflater.from(parent.context)
                 .inflate(
-                    R.layout.item_tag,
+                    R.layout.item_recipe_tag,
                     parent,
                     false
                 )
@@ -57,11 +57,12 @@ class TagAdapter(
     }
 
     override fun getItemCount(): Int {
+
         return tagList.size
     }
 
     fun updateList(
-        newList: List<Tag>
+        newList: List<RecipeTag>
     ) {
 
         tagList =

@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.example.recipebook.CookingHistory
 import com.example.recipebook.Ingredient
 import com.example.recipebook.Recipe
 import com.example.recipebook.RecipeIngredient
@@ -158,10 +159,14 @@ class RecipeDBHelper(context: Context) :
             while (it.moveToNext()) {
 
                 val id =
-                    it.getInt(it.getColumnIndexOrThrow("id"))
+                    it.getInt(
+                        it.getColumnIndexOrThrow("id")
+                    )
 
                 val name =
-                    it.getString(it.getColumnIndexOrThrow("name"))
+                    it.getString(
+                        it.getColumnIndexOrThrow("name")
+                    )
 
                 val description =
                     it.getString(
@@ -178,13 +183,25 @@ class RecipeDBHelper(context: Context) :
                         it.getColumnIndexOrThrow("image_uri")
                     )
 
+                val favorite =
+                    it.getInt(
+                        it.getColumnIndexOrThrow("favorite")
+                    ) == 1
+
+                // レシピのタグを取得
+                val tags =
+                    getTagsByRecipeId(id)
+                        .map { tag -> tag.name }
+
                 recipeList.add(
                     Recipe(
                         id = id,
                         name = name,
                         description = description,
                         cookTime = cookTime,
-                        imageUri = imageUri
+                        imageUri = imageUri,
+                        favorite = favorite,
+                        tags = tags
                     )
                 )
             }
@@ -239,12 +256,18 @@ class RecipeDBHelper(context: Context) :
                         it.getColumnIndexOrThrow("image_uri")
                     )
 
+                val favorite =
+                    it.getInt(
+                        it.getColumnIndexOrThrow("favorite")
+                    ) == 1
+
                 return Recipe(
                     id = id,
                     name = name,
                     description = description,
                     cookTime = cookTime,
-                    imageUri = imageUri
+                    imageUri = imageUri,
+                    favorite = favorite
                 )
             }
         }
@@ -275,6 +298,70 @@ class RecipeDBHelper(context: Context) :
             null,
             values
         )
+    }
+
+    // =========================
+    // 材料更新
+    // =========================
+    fun updateIngredient(
+        ingredientId: Int,
+        name: String,
+        category: String,
+        memo: String
+    ): Int {
+
+        val db = writableDatabase
+
+        val values = ContentValues().apply {
+            put("name", name)
+            put("category", category)
+            put("memo", memo)
+        }
+
+        return db.update(
+            "ingredients",
+            values,
+            "id = ?",
+            arrayOf(ingredientId.toString())
+        )
+    }
+
+    // =========================
+    // 材料削除
+    // =========================
+    fun deleteIngredient(
+        ingredientId: Int
+    ): Boolean {
+
+        val db = writableDatabase
+
+        db.beginTransaction()
+
+        try {
+
+            // レシピとの関連付けを削除
+            db.delete(
+                "recipe_ingredients",
+                "ingredient_id = ?",
+                arrayOf(ingredientId.toString())
+            )
+
+            // 材料本体を削除
+            val result =
+                db.delete(
+                    "ingredients",
+                    "id = ?",
+                    arrayOf(ingredientId.toString())
+                )
+
+            db.setTransactionSuccessful()
+
+            return result > 0
+
+        } finally {
+
+            db.endTransaction()
+        }
     }
 
     // =========================
@@ -380,6 +467,7 @@ class RecipeDBHelper(context: Context) :
 
         val query = """
         SELECT
+            ingredients.id,
             ingredients.name,
             recipe_ingredients.amount
         FROM recipe_ingredients
@@ -399,14 +487,18 @@ class RecipeDBHelper(context: Context) :
 
             while (it.moveToNext()) {
 
+                val ingredientId =
+                    it.getInt(0)
+
                 val name =
-                    it.getString(0)
+                    it.getString(1)
 
                 val amount =
-                    it.getString(1) ?: ""
+                    it.getString(2) ?: ""
 
                 ingredientList.add(
                     RecipeIngredient(
+                        ingredientId = ingredientId,
                         ingredientName = name,
                         amount = amount
                     )
@@ -446,6 +538,37 @@ class RecipeDBHelper(context: Context) :
     }
 
     // =========================
+    // レシピ材料の分量更新
+    // =========================
+    fun updateRecipeIngredientAmount(
+        recipeId: Int,
+        ingredientId: Int,
+        amount: String
+    ): Int {
+
+        val db = writableDatabase
+
+        val values =
+            ContentValues().apply {
+
+                put(
+                    "amount",
+                    amount
+                )
+            }
+
+        return db.update(
+            "recipe_ingredients",
+            values,
+            "recipe_id = ? AND ingredient_id = ?",
+            arrayOf(
+                recipeId.toString(),
+                ingredientId.toString()
+            )
+        )
+    }
+
+    // =========================
     // タグ追加
     // =========================
     fun insertTag(
@@ -463,6 +586,44 @@ class RecipeDBHelper(context: Context) :
             null,
             values
         )
+    }
+
+    // =========================
+    // タグ削除
+    // =========================
+    fun deleteTag(
+        tagId: Int
+    ): Boolean {
+
+        val db = writableDatabase
+
+        db.beginTransaction()
+
+        try {
+
+            // レシピとの関連付け削除
+            db.delete(
+                "recipe_tags",
+                "tag_id = ?",
+                arrayOf(tagId.toString())
+            )
+
+            // タグ本体削除
+            val result =
+                db.delete(
+                    "tags",
+                    "id = ?",
+                    arrayOf(tagId.toString())
+                )
+
+            db.setTransactionSuccessful()
+
+            return result > 0
+
+        } finally {
+
+            db.endTransaction()
+        }
     }
 
     // =========================
@@ -627,6 +788,26 @@ class RecipeDBHelper(context: Context) :
     }
 
     // =========================
+    // レシピからタグを削除
+    // =========================
+    fun deleteTagFromRecipe(
+        recipeId: Int,
+        tagId: Int
+    ): Int {
+
+        val db = writableDatabase
+
+        return db.delete(
+            "recipe_tags",
+            "recipe_id = ? AND tag_id = ?",
+            arrayOf(
+                recipeId.toString(),
+                tagId.toString()
+            )
+        )
+    }
+
+    // =========================
     // 手順追加
     // =========================
     fun insertStep(
@@ -658,6 +839,59 @@ class RecipeDBHelper(context: Context) :
             null,
             values
         )
+    }
+
+    // =========================
+    // 手順更新
+    // =========================
+    fun updateStep(
+        stepId: Int,
+        title: String,
+        description: String,
+        imageUri: String?,
+        timer: Int
+    ): Int {
+
+        val db = writableDatabase
+
+        val values = ContentValues().apply {
+            put("title", title)
+            put("description", description)
+
+            if (imageUri != null) {
+                put("image_uri", imageUri)
+            } else {
+                putNull("image_uri")
+            }
+
+            put("timer", timer)
+        }
+
+        return db.update(
+            "steps",
+            values,
+            "id = ?",
+            arrayOf(stepId.toString())
+        )
+    }
+
+    // =========================
+    // 手順削除
+    // =========================
+    fun deleteStep(
+        stepId: Int
+    ): Boolean {
+
+        val db = writableDatabase
+
+        val result =
+            db.delete(
+                "steps",
+                "id = ?",
+                arrayOf(stepId.toString())
+            )
+
+        return result > 0
     }
 
     // =========================
@@ -771,6 +1005,65 @@ class RecipeDBHelper(context: Context) :
     }
 
     // =========================
+    // 手順番号を振り直す
+    // =========================
+    fun reorderSteps(
+        recipeId: Int
+    ) {
+
+        val db = writableDatabase
+
+        val cursor = db.query(
+            "steps",
+            arrayOf("id"),
+            "recipe_id = ?",
+            arrayOf(recipeId.toString()),
+            null,
+            null,
+            "step_number ASC"
+        )
+
+        db.beginTransaction()
+
+        try {
+
+            var number = 1
+
+            cursor.use {
+
+                while (it.moveToNext()) {
+
+                    val stepId =
+                        it.getInt(0)
+
+                    val values =
+                        ContentValues().apply {
+                            put(
+                                "step_number",
+                                number
+                            )
+                        }
+
+                    db.update(
+                        "steps",
+                        values,
+                        "id = ?",
+                        arrayOf(stepId.toString())
+                    )
+
+                    number++
+                }
+            }
+
+            db.setTransactionSuccessful()
+
+        } finally {
+
+            db.endTransaction()
+        }
+    }
+
+    // =========================
     // 調理履歴保存
     // =========================
     fun insertCookingHistory(
@@ -796,5 +1089,317 @@ class RecipeDBHelper(context: Context) :
             null,
             values
         )
+    }
+
+    // =========================
+    // レシピ更新
+    // =========================
+    fun updateRecipe(
+        recipeId: Int,
+        name: String,
+        description: String,
+        cookTime: Int,
+        imageUri: String?
+    ): Int {
+
+        val db = writableDatabase
+
+        val values = ContentValues().apply {
+            put("name", name)
+            put("description", description)
+            put("cook_time", cookTime)
+
+            if (imageUri != null) {
+                put("image_uri", imageUri)
+            } else {
+                putNull("image_uri")
+            }
+        }
+
+        return db.update(
+            "recipes",
+            values,
+            "id = ?",
+            arrayOf(recipeId.toString())
+        )
+    }
+
+    // =========================
+    // レシピ削除
+    // =========================
+    fun deleteRecipe(
+        recipeId: Int
+    ): Boolean {
+
+        val db = writableDatabase
+
+        db.beginTransaction()
+
+        try {
+
+            // レシピと材料の関係
+            db.delete(
+                "recipe_ingredients",
+                "recipe_id = ?",
+                arrayOf(recipeId.toString())
+            )
+
+            // レシピとタグの関係
+            db.delete(
+                "recipe_tags",
+                "recipe_id = ?",
+                arrayOf(recipeId.toString())
+            )
+
+            // 手順
+            db.delete(
+                "steps",
+                "recipe_id = ?",
+                arrayOf(recipeId.toString())
+            )
+
+            // 調理履歴
+            db.delete(
+                "cooking_history",
+                "recipe_id = ?",
+                arrayOf(recipeId.toString())
+            )
+
+            // 最後にレシピ本体
+            val result =
+                db.delete(
+                    "recipes",
+                    "id = ?",
+                    arrayOf(recipeId.toString())
+                )
+
+            db.setTransactionSuccessful()
+
+            return result > 0
+
+        } finally {
+
+            db.endTransaction()
+        }
+    }
+
+    // =========================
+    // レシピから材料を削除
+    // =========================
+    fun deleteIngredientFromRecipe(
+        recipeId: Int,
+        ingredientId: Int
+    ): Int {
+
+        val db = writableDatabase
+
+        return db.delete(
+            "recipe_ingredients",
+            "recipe_id = ? AND ingredient_id = ?",
+            arrayOf(
+                recipeId.toString(),
+                ingredientId.toString()
+            )
+        )
+    }
+
+    // =========================
+    // お気に入り状態変更
+    // =========================
+    fun updateFavorite(
+        recipeId: Int,
+        favorite: Boolean
+    ): Int {
+
+        val db = writableDatabase
+
+        val values = ContentValues().apply {
+            put(
+                "favorite",
+                if (favorite) 1 else 0
+            )
+        }
+
+        return db.update(
+            "recipes",
+            values,
+            "id = ?",
+            arrayOf(recipeId.toString())
+        )
+    }
+
+    // =========================
+    // お気に入りレシピ一覧
+    // =========================
+    fun getFavoriteRecipes(): MutableList<Recipe> {
+
+        val recipeList =
+            mutableListOf<Recipe>()
+
+        val db =
+            readableDatabase
+
+        val cursor =
+            db.query(
+                "recipes",
+                null,
+                "favorite = ?",
+                arrayOf("1"),
+                null,
+                null,
+                "id DESC"
+            )
+
+        cursor.use {
+
+            while (it.moveToNext()) {
+
+                val id =
+                    it.getInt(
+                        it.getColumnIndexOrThrow("id")
+                    )
+
+                val name =
+                    it.getString(
+                        it.getColumnIndexOrThrow("name")
+                    )
+
+                val description =
+                    it.getString(
+                        it.getColumnIndexOrThrow("description")
+                    ) ?: ""
+
+                val cookTime =
+                    it.getInt(
+                        it.getColumnIndexOrThrow("cook_time")
+                    )
+
+                val imageUri =
+                    it.getString(
+                        it.getColumnIndexOrThrow("image_uri")
+                    )
+
+                // タグ取得
+                val tags =
+                    getTagsByRecipeId(id)
+                        .map { tag -> tag.name }
+
+                recipeList.add(
+                    Recipe(
+                        id = id,
+                        name = name,
+                        description = description,
+                        cookTime = cookTime,
+                        imageUri = imageUri,
+                        favorite = true,
+                        tags = tags
+                    )
+                )
+            }
+        }
+
+        return recipeList
+    }
+
+    // =========================
+    // お気に入り状態取得
+    // =========================
+    fun isFavorite(
+        recipeId: Int
+    ): Boolean {
+
+        val db = readableDatabase
+
+        val cursor = db.query(
+            "recipes",
+            arrayOf("favorite"),
+            "id = ?",
+            arrayOf(recipeId.toString()),
+            null,
+            null,
+            null
+        )
+
+        cursor.use {
+
+            if (it.moveToFirst()) {
+
+                return it.getInt(
+                    it.getColumnIndexOrThrow("favorite")
+                ) == 1
+            }
+        }
+
+        return false
+    }
+
+    // =========================
+    // 調理履歴一覧取得
+    // =========================
+    fun getAllCookingHistories(): MutableList<CookingHistory> {
+
+        val historyList =
+            mutableListOf<CookingHistory>()
+
+        val db = readableDatabase
+
+        val query = """
+        SELECT
+            cooking_history.id,
+            cooking_history.recipe_id,
+            recipes.name,
+            cooking_history.start_time,
+            cooking_history.finish_time,
+            cooking_history.elapsed_time,
+            cooking_history.comment
+        FROM cooking_history
+        INNER JOIN recipes
+            ON cooking_history.recipe_id = recipes.id
+        ORDER BY cooking_history.start_time DESC
+    """.trimIndent()
+
+        val cursor =
+            db.rawQuery(query, null)
+
+        cursor.use {
+
+            while (it.moveToNext()) {
+
+                val id =
+                    it.getInt(0)
+
+                val recipeId =
+                    it.getInt(1)
+
+                val recipeName =
+                    it.getString(2)
+
+                val startTime =
+                    it.getString(3) ?: ""
+
+                val finishTime =
+                    it.getString(4) ?: ""
+
+                val elapsedTime =
+                    it.getInt(5)
+
+                val comment =
+                    it.getString(6) ?: ""
+
+                historyList.add(
+                    CookingHistory(
+                        id = id,
+                        recipeId = recipeId,
+                        recipeName = recipeName,
+                        startTime = startTime,
+                        finishTime = finishTime,
+                        elapsedTime = elapsedTime,
+                        comment = comment
+                    )
+                )
+            }
+        }
+
+        return historyList
     }
 }

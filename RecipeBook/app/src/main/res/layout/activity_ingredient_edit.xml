@@ -32,14 +32,14 @@
 
             <!-- タイトル -->
             <TextView
-                android:layout_width="0dp"
+                android:id="@+id/screenTitle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
+                android:layout_marginTop="10dp"
                 android:text="材料追加"
-                android:textColor="#222222"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#222222" />
 
         </LinearLayout>
 
@@ -113,6 +113,16 @@
                 android:layout_height="55dp"
                 android:layout_marginTop="25dp"
                 android:text="保存" />
+
+            <!-- 削除 -->
+            <Button
+                android:id="@+id/deleteIngredientButton"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginTop="10dp"
+                android:text="材料を削除"
+                android:textColor="#E74C3C"
+                android:visibility="gone" />
 
         </LinearLayout>
 

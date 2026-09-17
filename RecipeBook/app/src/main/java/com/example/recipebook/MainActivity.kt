@@ -1,12 +1,10 @@
 package com.example.recipebook
 
 import adapter.RecipeAdapter
-import activity.RecipeEditActivity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -131,6 +129,32 @@ class MainActivity : AppCompatActivity() {
                 Intent(
                     this,
                     TagActivity::class.java
+                )
+            )
+        }
+
+        // お気に入り
+        findViewById<TextView>(
+            R.id.favoriteManageButton
+        ).setOnClickListener {
+
+            startActivity(
+                Intent(
+                    this,
+                    FavoriteActivity::class.java
+                )
+            )
+        }
+
+        // 調理履歴
+        findViewById<TextView>(
+            R.id.historyButton
+        ).setOnClickListener {
+
+            startActivity(
+                Intent(
+                    this,
+                    CookingHistoryActivity::class.java
                 )
             )
         }

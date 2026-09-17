@@ -1,4 +1,4 @@
-package activity
+package com.example.recipebook
 
 import android.content.Intent
 import android.net.Uri
@@ -12,7 +12,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import com.example.recipebook.R
 import com.example.recipebook.database.RecipeDBHelper
 
 class RecipeEditActivity : AppCompatActivity() {
@@ -22,9 +21,14 @@ class RecipeEditActivity : AppCompatActivity() {
     private lateinit var cookTimeSpinner: Spinner
     private lateinit var recipeImage: ImageView
 
+    private lateinit var dbHelper: RecipeDBHelper
+
+    private var recipeId: Int = -1
+
     private var selectedImageUri: Uri? = null
 
-    private lateinit var dbHelper: RecipeDBHelper
+    // 編集モードかどうか
+    private var isEditMode = false
 
     // 画像選択
     private val imagePicker =
@@ -36,13 +40,15 @@ class RecipeEditActivity : AppCompatActivity() {
 
                 selectedImageUri = uri
 
-                // アプリから画像URIを保持できるようにする
                 try {
+
                     contentResolver.takePersistableUriPermission(
                         uri,
                         Intent.FLAG_GRANT_READ_URI_PERMISSION
                     )
+
                 } catch (e: SecurityException) {
+
                     e.printStackTrace()
                 }
 
@@ -53,9 +59,14 @@ class RecipeEditActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_recipe_edit)
+        setContentView(
+            R.layout.activity_recipe_edit
+        )
 
+        // =========================
         // View取得
+        // =========================
+
         nameEditText =
             findViewById(R.id.nameEditText)
 
@@ -68,10 +79,14 @@ class RecipeEditActivity : AppCompatActivity() {
         recipeImage =
             findViewById(R.id.recipeImage)
 
-        dbHelper = RecipeDBHelper(this)
+        dbHelper =
+            RecipeDBHelper(this)
 
 
+        // =========================
         // 調理時間
+        // =========================
+
         val cookTimes = arrayOf(
             "5分",
             "10分",
@@ -97,10 +112,46 @@ class RecipeEditActivity : AppCompatActivity() {
             android.R.layout.simple_spinner_dropdown_item
         )
 
-        cookTimeSpinner.adapter = spinnerAdapter
+        cookTimeSpinner.adapter =
+            spinnerAdapter
 
 
+        // =========================
+        // 編集モード判定
+        // =========================
+
+        recipeId =
+            intent.getIntExtra(
+                "recipe_id",
+                -1
+            )
+
+        isEditMode =
+            recipeId != -1
+
+
+        if (isEditMode) {
+
+            // 編集画面
+            findViewById<TextView>(
+                R.id.screenTitle
+            )?.text = "レシピ編集"
+
+            loadRecipe()
+
+        } else {
+
+            // 新規追加
+            findViewById<TextView>(
+                R.id.screenTitle
+            )?.text = "レシピ追加"
+        }
+
+
+        // =========================
         // 画像選択
+        // =========================
+
         findViewById<Button>(
             R.id.selectImageButton
         ).setOnClickListener {
@@ -111,7 +162,10 @@ class RecipeEditActivity : AppCompatActivity() {
         }
 
 
+        // =========================
         // 戻る
+        // =========================
+
         findViewById<TextView>(
             R.id.backButton
         ).setOnClickListener {
@@ -120,7 +174,10 @@ class RecipeEditActivity : AppCompatActivity() {
         }
 
 
+        // =========================
         // 保存
+        // =========================
+
         findViewById<TextView>(
             R.id.saveButton
         ).setOnClickListener {
@@ -130,15 +187,92 @@ class RecipeEditActivity : AppCompatActivity() {
     }
 
 
+    // =========================
+    // レシピ読み込み
+    // =========================
+
+    private fun loadRecipe() {
+
+        val recipe =
+            dbHelper.getRecipeById(
+                recipeId
+            )
+
+        if (recipe == null) {
+
+            Toast.makeText(
+                this,
+                "レシピが見つかりません",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            finish()
+
+            return
+        }
+
+
+        // 名前
+        nameEditText.setText(
+            recipe.name
+        )
+
+
+        // 説明
+        descriptionEditText.setText(
+            recipe.description
+        )
+
+
+        // 調理時間
+        val timeText =
+            "${recipe.cookTime}分"
+
+        val spinnerPosition =
+            (cookTimeSpinner.adapter as ArrayAdapter<String>)
+                .getPosition(timeText)
+
+        if (spinnerPosition >= 0) {
+
+            cookTimeSpinner.setSelection(
+                spinnerPosition
+            )
+        }
+
+
+        // 画像
+        if (!recipe.imageUri.isNullOrEmpty()) {
+
+            selectedImageUri =
+                Uri.parse(
+                    recipe.imageUri
+                )
+
+            recipeImage.setImageURI(
+                selectedImageUri
+            )
+        }
+    }
+
+
+    // =========================
+    // 保存
+    // =========================
+
     private fun saveRecipe() {
 
         val name =
-            nameEditText.text.toString().trim()
+            nameEditText.text
+                .toString()
+                .trim()
 
         val description =
-            descriptionEditText.text.toString().trim()
+            descriptionEditText.text
+                .toString()
+                .trim()
 
-        // レシピ名チェック
+
+        // 名前チェック
         if (name.isEmpty()) {
 
             nameEditText.error =
@@ -147,9 +281,11 @@ class RecipeEditActivity : AppCompatActivity() {
             return
         }
 
+
         // 調理時間
         val cookTimeText =
-            cookTimeSpinner.selectedItem.toString()
+            cookTimeSpinner.selectedItem
+                .toString()
 
         val cookTime =
             cookTimeText
@@ -157,33 +293,76 @@ class RecipeEditActivity : AppCompatActivity() {
                 .toInt()
 
 
-        // DB保存
-        val result =
-            dbHelper.insertRecipe(
-                name = name,
-                description = description,
-                cookTime = cookTime,
-                imageUri = selectedImageUri?.toString()
-            )
+        val imageUri =
+            selectedImageUri?.toString()
 
 
-        if (result != -1L) {
+        if (isEditMode) {
 
-            Toast.makeText(
-                this,
-                "レシピを保存しました",
-                Toast.LENGTH_SHORT
-            ).show()
+            // =========================
+            // 更新
+            // =========================
 
-            finish()
+            val result =
+                dbHelper.updateRecipe(
+                    recipeId = recipeId,
+                    name = name,
+                    description = description,
+                    cookTime = cookTime,
+                    imageUri = imageUri
+                )
+
+            if (result > 0) {
+
+                Toast.makeText(
+                    this,
+                    "レシピを更新しました",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                finish()
+
+            } else {
+
+                Toast.makeText(
+                    this,
+                    "更新に失敗しました",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
 
         } else {
 
-            Toast.makeText(
-                this,
-                "保存に失敗しました",
-                Toast.LENGTH_SHORT
-            ).show()
+            // =========================
+            // 新規追加
+            // =========================
+
+            val result =
+                dbHelper.insertRecipe(
+                    name = name,
+                    description = description,
+                    cookTime = cookTime,
+                    imageUri = imageUri
+                )
+
+            if (result != -1L) {
+
+                Toast.makeText(
+                    this,
+                    "レシピを保存しました",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                finish()
+
+            } else {
+
+                Toast.makeText(
+                    this,
+                    "保存に失敗しました",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 }

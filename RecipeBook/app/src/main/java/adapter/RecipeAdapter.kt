@@ -32,6 +32,11 @@ class RecipeAdapter(
 
         val tags: TextView =
             itemView.findViewById(R.id.recipeTags)
+
+        val favoriteMark: TextView =
+            itemView.findViewById(
+                R.id.favoriteMark
+            )
     }
 
     override fun onCreateViewHolder(
@@ -92,6 +97,18 @@ class RecipeAdapter(
 
             holder.tags.text =
                 recipe.tags.joinToString("   ")
+        }
+
+        // お気に入り
+        if (recipe.favorite) {
+
+            holder.favoriteMark.visibility =
+                View.VISIBLE
+
+        } else {
+
+            holder.favoriteMark.visibility =
+                View.GONE
         }
 
         // タップ

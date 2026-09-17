@@ -17,10 +17,6 @@
             android:exported="false" />
 
         <activity
-            android:name="activity.RecipeEditActivity"
-            android:exported="false" />
-
-        <activity
             android:name=".IngredientActivity"
             android:exported="false" />
 
@@ -37,10 +33,6 @@
             android:exported="false" />
 
         <activity
-            android:name="activity.IngredientEditActivity"
-            android:exported="false" />
-
-        <activity
             android:name=".AddRecipeTagActivity"
             android:exported="false" />
 
@@ -50,6 +42,22 @@
 
         <activity
             android:name=".CookingActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".RecipeEditActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".FavoriteActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".IngredientEditActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".CookingHistoryActivity"
             android:exported="false" />
 
         <activity
