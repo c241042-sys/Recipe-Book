@@ -3,12 +3,15 @@ package com.example.recipebook
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class StepAdapter(
     private var stepList: List<Step>,
-    private val onItemClick: (Step) -> Unit
+    private val onItemClick: (Step) -> Unit,
+    private val onMoveUp: (Step) -> Unit,
+    private val onMoveDown: (Step) -> Unit
 ) : RecyclerView.Adapter<StepAdapter.StepViewHolder>() {
 
     class StepViewHolder(
@@ -34,8 +37,17 @@ class StepAdapter(
             itemView.findViewById(
                 R.id.stepTimer
             )
-    }
 
+        val moveUpButton: Button =
+            itemView.findViewById(
+                R.id.moveUpButton
+            )
+
+        val moveDownButton: Button =
+            itemView.findViewById(
+                R.id.moveDownButton
+            )
+    }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -43,16 +55,16 @@ class StepAdapter(
     ): StepViewHolder {
 
         val view =
-            LayoutInflater.from(parent.context)
-                .inflate(
-                    R.layout.item_step,
-                    parent,
-                    false
-                )
+            LayoutInflater.from(
+                parent.context
+            ).inflate(
+                R.layout.item_step,
+                parent,
+                false
+            )
 
         return StepViewHolder(view)
     }
-
 
     override fun onBindViewHolder(
         holder: StepViewHolder,
@@ -71,7 +83,6 @@ class StepAdapter(
         holder.description.text =
             step.description
 
-
         if (step.timer > 0) {
 
             holder.timer.text =
@@ -84,19 +95,37 @@ class StepAdapter(
         }
 
 
-        // タップで編集
+        // 手順編集
         holder.itemView.setOnClickListener {
 
             onItemClick(step)
         }
-    }
 
+
+        // 上へ
+        holder.moveUpButton.isEnabled =
+            position > 0
+
+        holder.moveUpButton.setOnClickListener {
+
+            onMoveUp(step)
+        }
+
+
+        // 下へ
+        holder.moveDownButton.isEnabled =
+            position < stepList.size - 1
+
+        holder.moveDownButton.setOnClickListener {
+
+            onMoveDown(step)
+        }
+    }
 
     override fun getItemCount(): Int {
 
         return stepList.size
     }
-
 
     fun updateList(
         newList: List<Step>
@@ -107,7 +136,6 @@ class StepAdapter(
 
         notifyDataSetChanged()
     }
-
 
     private fun formatTime(
         seconds: Int

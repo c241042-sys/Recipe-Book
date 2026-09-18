@@ -126,6 +126,35 @@
             android:layout_width="match_parent"
             android:layout_height="55dp" />
 
+        <!-- 難易度 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="難易度"
+            android:textStyle="bold"
+            android:textColor="#333333" />
+
+        <Spinner
+            android:id="@+id/difficultySpinner"
+            android:layout_width="match_parent"
+            android:layout_height="55dp" />
+
+
+        <!-- 人数 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="人数"
+            android:textStyle="bold"
+            android:textColor="#333333" />
+
+        <Spinner
+            android:id="@+id/servingsSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="55dp" />
+
     </LinearLayout>
 
 </ScrollView>

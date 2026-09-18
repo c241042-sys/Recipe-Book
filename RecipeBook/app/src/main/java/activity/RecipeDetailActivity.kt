@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -26,6 +27,8 @@ class RecipeDetailActivity : AppCompatActivity() {
     private lateinit var recipeName: TextView
     private lateinit var recipeDescription: TextView
     private lateinit var recipeTime: TextView
+    private lateinit var recipeDifficulty: TextView
+    private lateinit var recipeServings: TextView
     private lateinit var favoriteButton: TextView
     private lateinit var stepAdapter: StepAdapter
 
@@ -141,11 +144,9 @@ class RecipeDetailActivity : AppCompatActivity() {
         }
     }
 
-    private lateinit var ingredientAdapter:
-            RecipeDetailIngredientAdapter
-
     private lateinit var tagAdapter:
             RecipeDetailTagAdapter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -190,6 +191,12 @@ class RecipeDetailActivity : AppCompatActivity() {
         recipeTime =
             findViewById(R.id.recipeTime)
 
+        recipeDifficulty =
+            findViewById(R.id.recipeDifficulty)
+
+        recipeServings =
+            findViewById(R.id.recipeServings)
+
         favoriteButton =
             findViewById(R.id.favoriteButton)
 
@@ -204,27 +211,58 @@ class RecipeDetailActivity : AppCompatActivity() {
 
         stepAdapter =
             StepAdapter(
-                emptyList()
-            ) { step ->
+                emptyList(),
 
-                val intent =
-                    Intent(
-                        this,
-                        StepEditActivity::class.java
+                // 編集
+                { step ->
+
+                    val intent =
+                        Intent(
+                            this,
+                            StepEditActivity::class.java
+                        )
+
+                    intent.putExtra(
+                        "recipe_id",
+                        recipeId
                     )
 
-                intent.putExtra(
-                    "recipe_id",
-                    recipeId
-                )
+                    intent.putExtra(
+                        "step_id",
+                        step.id
+                    )
 
-                intent.putExtra(
-                    "step_id",
-                    step.id
-                )
+                    startActivity(intent)
+                },
 
-                startActivity(intent)
-            }
+                // 上へ
+                { step ->
+
+                    if (
+                        dbHelper.moveStepUp(
+                            recipeId,
+                            step.id
+                        )
+                    ) {
+
+                        loadRecipe()
+                    }
+                },
+
+                // 下へ
+                { step ->
+
+                    if (
+                        dbHelper.moveStepDown(
+                            recipeId,
+                            step.id
+                        )
+                    ) {
+
+                        loadRecipe()
+                    }
+                }
+            )
 
         stepRecyclerView.adapter =
             stepAdapter
@@ -328,39 +366,6 @@ class RecipeDetailActivity : AppCompatActivity() {
 
             startActivity(intent)
         }
-
-        // 材料編集
-        val ingredientRecyclerView =
-            findViewById<RecyclerView>(
-                R.id.ingredientRecyclerView
-            )
-
-        ingredientAdapter =
-            RecipeDetailIngredientAdapter(
-                emptyList(),
-
-                // タップ → 分量編集
-                { ingredient ->
-
-                    showEditIngredientAmountDialog(
-                        ingredient
-                    )
-                },
-
-                // 長押し → 削除
-                { ingredient ->
-
-                    showDeleteIngredientDialog(
-                        ingredient
-                    )
-                }
-            )
-
-        ingredientRecyclerView.adapter =
-            ingredientAdapter
-
-        ingredientRecyclerView.layoutManager =
-            LinearLayoutManager(this)
 
         // =========================
         // タグ
@@ -477,6 +482,20 @@ class RecipeDetailActivity : AppCompatActivity() {
             "${recipe.cookTime}分"
 
         // =========================
+        // 難易度
+        // =========================
+
+        recipeDifficulty.text =
+            recipe.difficulty
+
+        // =========================
+        // 人数
+        // =========================
+
+        recipeServings.text =
+            "${recipe.servings}人分"
+
+        // =========================
         // 画像
         // =========================
 
@@ -502,14 +521,17 @@ class RecipeDetailActivity : AppCompatActivity() {
                 recipeId
             )
 
-        ingredientAdapter.updateList(
-            ingredients
-        )
+        val ingredientContainer =
+            findViewById<LinearLayout>(
+                R.id.ingredientContainer
+            )
 
         val ingredientEmptyText =
             findViewById<TextView>(
                 R.id.ingredientEmptyText
             )
+
+        ingredientContainer.removeAllViews()
 
         if (ingredients.isEmpty()) {
 
@@ -520,6 +542,57 @@ class RecipeDetailActivity : AppCompatActivity() {
 
             ingredientEmptyText.visibility =
                 View.GONE
+
+            for (ingredient in ingredients) {
+
+                val itemView =
+                    layoutInflater.inflate(
+                        R.layout.item_recipe_detail_ingredient,
+                        ingredientContainer,
+                        false
+                    )
+
+                val nameText =
+                    itemView.findViewById<TextView>(
+                        R.id.ingredientName
+                    )
+
+                val amountText =
+                    itemView.findViewById<TextView>(
+                        R.id.ingredientAmount
+                    )
+
+                nameText.text =
+                    ingredient.ingredientName
+
+                amountText.text =
+                    ingredient.amount
+
+
+                // タップ → 分量編集
+                itemView.setOnClickListener {
+
+                    showEditIngredientAmountDialog(
+                        ingredient
+                    )
+                }
+
+
+                // 長押し → 削除
+                itemView.setOnLongClickListener {
+
+                    showDeleteIngredientDialog(
+                        ingredient
+                    )
+
+                    true
+                }
+
+
+                ingredientContainer.addView(
+                    itemView
+                )
+            }
         }
 
         // =========================

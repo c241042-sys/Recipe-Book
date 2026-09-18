@@ -18,8 +18,14 @@ class RecipeEditActivity : AppCompatActivity() {
 
     private lateinit var nameEditText: EditText
     private lateinit var descriptionEditText: EditText
+
     private lateinit var cookTimeSpinner: Spinner
+    private lateinit var difficultySpinner: Spinner
+    private lateinit var servingsSpinner: Spinner
+
     private lateinit var recipeImage: ImageView
+
+    private lateinit var difficultyAdapter: ArrayAdapter<String>
 
     private lateinit var dbHelper: RecipeDBHelper
 
@@ -76,12 +82,17 @@ class RecipeEditActivity : AppCompatActivity() {
         cookTimeSpinner =
             findViewById(R.id.cookTimeSpinner)
 
+        difficultySpinner =
+            findViewById(R.id.difficultySpinner)
+
+        servingsSpinner =
+            findViewById(R.id.servingsSpinner)
+
         recipeImage =
             findViewById(R.id.recipeImage)
 
         dbHelper =
             RecipeDBHelper(this)
-
 
         // =========================
         // 調理時間
@@ -115,6 +126,60 @@ class RecipeEditActivity : AppCompatActivity() {
         cookTimeSpinner.adapter =
             spinnerAdapter
 
+// =========================
+// 難易度
+// =========================
+
+        val difficulties =
+            arrayOf(
+                "簡単",
+                "普通",
+                "難しい"
+            )
+
+        difficultyAdapter =
+            ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_item,
+                difficulties
+            )
+
+        difficultyAdapter.setDropDownViewResource(
+            android.R.layout.simple_spinner_dropdown_item
+        )
+
+        difficultySpinner.adapter =
+            difficultyAdapter
+
+        // =========================
+        // 人数
+        // =========================
+
+        val servings =
+            arrayOf(
+                "1人分",
+                "2人分",
+                "3人分",
+                "4人分",
+                "5人分",
+                "6人分",
+                "7人分",
+                "8人分"
+            )
+
+        val servingsAdapter =
+            ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_item,
+                servings
+            )
+
+        servingsAdapter.setDropDownViewResource(
+            android.R.layout.simple_spinner_dropdown_item
+        )
+
+        servingsSpinner.adapter =
+            servingsAdapter
 
         // =========================
         // 編集モード判定
@@ -239,6 +304,28 @@ class RecipeEditActivity : AppCompatActivity() {
             )
         }
 
+        // 難易度
+        val difficultyPosition =
+            difficultyAdapter.getPosition(
+                recipe.difficulty
+            )
+
+        if (difficultyPosition >= 0) {
+
+            difficultySpinner.setSelection(
+                difficultyPosition
+            )
+        }
+
+        // 人数
+        if (
+            recipe.servings in 1..8
+        ) {
+
+            servingsSpinner.setSelection(
+                recipe.servings - 1
+            )
+        }
 
         // 画像
         if (!recipe.imageUri.isNullOrEmpty()) {
@@ -292,7 +379,16 @@ class RecipeEditActivity : AppCompatActivity() {
                 .replace("分", "")
                 .toInt()
 
+        // 難易度
+        val difficulty =
+            difficultySpinner.selectedItem
+                .toString()
 
+        // 人数
+        val servings =
+            servingsSpinner.selectedItemPosition + 1
+
+        // 画像
         val imageUri =
             selectedImageUri?.toString()
 
@@ -309,6 +405,8 @@ class RecipeEditActivity : AppCompatActivity() {
                     name = name,
                     description = description,
                     cookTime = cookTime,
+                    difficulty = difficulty,
+                    servings = servings,
                     imageUri = imageUri
                 )
 
@@ -342,6 +440,8 @@ class RecipeEditActivity : AppCompatActivity() {
                     name = name,
                     description = description,
                     cookTime = cookTime,
+                    difficulty = difficulty,
+                    servings = servings,
                     imageUri = imageUri
                 )
 

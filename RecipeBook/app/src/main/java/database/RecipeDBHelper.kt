@@ -13,7 +13,7 @@ import com.example.recipebook.Step
 import com.example.recipebook.Tag
 
 class RecipeDBHelper(context: Context) :
-    SQLiteOpenHelper(context, "RecipeBook.db", null, 1) {
+    SQLiteOpenHelper(context, "RecipeBook.db", null, 2) {
 
     override fun onCreate(db: SQLiteDatabase) {
 
@@ -24,6 +24,8 @@ class RecipeDBHelper(context: Context) :
                 name TEXT NOT NULL,
                 description TEXT,
                 cook_time INTEGER,
+                difficulty TEXT DEFAULT '普通',
+                servings INTEGER DEFAULT 2,
                 image_uri TEXT,
                 favorite INTEGER DEFAULT 0
             )
@@ -99,15 +101,17 @@ class RecipeDBHelper(context: Context) :
         oldVersion: Int,
         newVersion: Int
     ) {
-        db.execSQL("DROP TABLE IF EXISTS cooking_history")
-        db.execSQL("DROP TABLE IF EXISTS steps")
-        db.execSQL("DROP TABLE IF EXISTS recipe_tags")
-        db.execSQL("DROP TABLE IF EXISTS tags")
-        db.execSQL("DROP TABLE IF EXISTS recipe_ingredients")
-        db.execSQL("DROP TABLE IF EXISTS ingredients")
-        db.execSQL("DROP TABLE IF EXISTS recipes")
 
-        onCreate(db)
+        if (oldVersion < 2) {
+
+            db.execSQL(
+                "ALTER TABLE recipes ADD COLUMN difficulty TEXT DEFAULT '普通'"
+            )
+
+            db.execSQL(
+                "ALTER TABLE recipes ADD COLUMN servings INTEGER DEFAULT 2"
+            )
+        }
     }
 
     // =========================
@@ -117,22 +121,31 @@ class RecipeDBHelper(context: Context) :
         name: String,
         description: String,
         cookTime: Int,
-        imageUri: String?
+        imageUri: String?,
+        difficulty: String = "普通",
+        servings: Int = 2
     ): Long {
 
         val db = writableDatabase
 
         val values = ContentValues().apply {
+
             put("name", name)
             put("description", description)
             put("cook_time", cookTime)
+            put("difficulty", difficulty)
+            put("servings", servings)
 
             if (imageUri != null) {
                 put("image_uri", imageUri)
             }
         }
 
-        return db.insert("recipes", null, values)
+        return db.insert(
+            "recipes",
+            null,
+            values
+        )
     }
 
     // =========================
@@ -188,6 +201,16 @@ class RecipeDBHelper(context: Context) :
                         it.getColumnIndexOrThrow("favorite")
                     ) == 1
 
+                val difficulty =
+                    it.getString(
+                        it.getColumnIndexOrThrow("difficulty")
+                    ) ?: "普通"
+
+                val servings =
+                    it.getInt(
+                        it.getColumnIndexOrThrow("servings")
+                    )
+
                 // レシピのタグを取得
                 val tags =
                     getTagsByRecipeId(id)
@@ -201,7 +224,9 @@ class RecipeDBHelper(context: Context) :
                         cookTime = cookTime,
                         imageUri = imageUri,
                         favorite = favorite,
-                        tags = tags
+                        tags = tags,
+                        difficulty = difficulty,
+                        servings = servings
                     )
                 )
             }
@@ -261,13 +286,25 @@ class RecipeDBHelper(context: Context) :
                         it.getColumnIndexOrThrow("favorite")
                     ) == 1
 
+                val difficulty =
+                    it.getString(
+                        it.getColumnIndexOrThrow("difficulty")
+                    ) ?: "普通"
+
+                val servings =
+                    it.getInt(
+                        it.getColumnIndexOrThrow("servings")
+                    )
+
                 return Recipe(
                     id = id,
                     name = name,
                     description = description,
                     cookTime = cookTime,
                     imageUri = imageUri,
-                    favorite = favorite
+                    favorite = favorite,
+                    difficulty = difficulty,
+                    servings = servings
                 )
             }
         }
@@ -1064,6 +1101,169 @@ class RecipeDBHelper(context: Context) :
     }
 
     // =========================
+    // 手順を1つ上へ移動
+    // =========================
+    fun moveStepUp(
+        recipeId: Int,
+        stepId: Int
+    ): Boolean {
+
+        val steps =
+            getStepsByRecipeId(recipeId)
+
+        val index =
+            steps.indexOfFirst {
+                it.id == stepId
+            }
+
+        // 先頭なら移動できない
+        if (index <= 0) {
+            return false
+        }
+
+        val current =
+            steps[index]
+
+        val previous =
+            steps[index - 1]
+
+        val db =
+            writableDatabase
+
+        db.beginTransaction()
+
+        try {
+
+            // 現在の手順を前の番号へ
+            val currentValues =
+                ContentValues().apply {
+                    put(
+                        "step_number",
+                        previous.stepNumber
+                    )
+                }
+
+            // 前の手順を現在の番号へ
+            val previousValues =
+                ContentValues().apply {
+                    put(
+                        "step_number",
+                        current.stepNumber
+                    )
+                }
+
+            db.update(
+                "steps",
+                currentValues,
+                "id = ?",
+                arrayOf(
+                    current.id.toString()
+                )
+            )
+
+            db.update(
+                "steps",
+                previousValues,
+                "id = ?",
+                arrayOf(
+                    previous.id.toString()
+                )
+            )
+
+            db.setTransactionSuccessful()
+
+            return true
+
+        } finally {
+
+            db.endTransaction()
+        }
+    }
+
+    // =========================
+    // 手順を1つ下へ移動
+    // =========================
+    fun moveStepDown(
+        recipeId: Int,
+        stepId: Int
+    ): Boolean {
+
+        val steps =
+            getStepsByRecipeId(recipeId)
+
+        val index =
+            steps.indexOfFirst {
+                it.id == stepId
+            }
+
+        // 最後の手順なら移動できない
+        if (
+            index < 0 ||
+            index >= steps.size - 1
+        ) {
+            return false
+        }
+
+        val current =
+            steps[index]
+
+        val next =
+            steps[index + 1]
+
+        val db =
+            writableDatabase
+
+        db.beginTransaction()
+
+        try {
+
+            // 現在の手順を次の番号へ
+            val currentValues =
+                ContentValues().apply {
+                    put(
+                        "step_number",
+                        next.stepNumber
+                    )
+                }
+
+            // 次の手順を現在の番号へ
+            val nextValues =
+                ContentValues().apply {
+                    put(
+                        "step_number",
+                        current.stepNumber
+                    )
+                }
+
+            db.update(
+                "steps",
+                currentValues,
+                "id = ?",
+                arrayOf(
+                    current.id.toString()
+                )
+            )
+
+            db.update(
+                "steps",
+                nextValues,
+                "id = ?",
+                arrayOf(
+                    next.id.toString()
+                )
+            )
+
+            db.setTransactionSuccessful()
+
+            return true
+
+        } finally {
+
+            db.endTransaction()
+        }
+    }
+
+    // =========================
     // 調理履歴保存
     // =========================
     fun insertCookingHistory(
@@ -1099,15 +1299,20 @@ class RecipeDBHelper(context: Context) :
         name: String,
         description: String,
         cookTime: Int,
-        imageUri: String?
+        imageUri: String?,
+        difficulty: String = "普通",
+        servings: Int = 2
     ): Int {
 
         val db = writableDatabase
 
         val values = ContentValues().apply {
+
             put("name", name)
             put("description", description)
             put("cook_time", cookTime)
+            put("difficulty", difficulty)
+            put("servings", servings)
 
             if (imageUri != null) {
                 put("image_uri", imageUri)
@@ -1279,6 +1484,16 @@ class RecipeDBHelper(context: Context) :
                         it.getColumnIndexOrThrow("image_uri")
                     )
 
+                val difficulty =
+                    it.getString(
+                        it.getColumnIndexOrThrow("difficulty")
+                    ) ?: "普通"
+
+                val servings =
+                    it.getInt(
+                        it.getColumnIndexOrThrow("servings")
+                    )
+
                 // タグ取得
                 val tags =
                     getTagsByRecipeId(id)
@@ -1292,7 +1507,9 @@ class RecipeDBHelper(context: Context) :
                         cookTime = cookTime,
                         imageUri = imageUri,
                         favorite = true,
-                        tags = tags
+                        tags = tags,
+                        difficulty = difficulty,
+                        servings = servings
                     )
                 )
             }

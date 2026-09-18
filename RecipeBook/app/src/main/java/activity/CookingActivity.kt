@@ -44,7 +44,7 @@ class CookingActivity : AppCompatActivity() {
 
     private var countDownTimer: CountDownTimer? = null
 
-    private var remainingTime: Long = 0
+    private var remainingTimeMillis: Long = 0L
 
     private var timerRunning = false
 
@@ -183,7 +183,14 @@ class CookingActivity : AppCompatActivity() {
         // タイマー開始
         startTimerButton.setOnClickListener {
 
-            startTimer()
+            if (timerRunning) {
+
+                pauseTimer()
+
+            } else {
+
+                startTimer()
+            }
         }
 
 
@@ -210,13 +217,11 @@ class CookingActivity : AppCompatActivity() {
 
 
         // タイトル
-        stepTitle.text =
-            step.title
+        stepTitle.text = step.title
 
 
         // 説明
-        stepDescription.text =
-            step.description
+        stepDescription.text = step.description
 
 
         // 画像
@@ -274,23 +279,31 @@ class CookingActivity : AppCompatActivity() {
 
 
         // 手順のタイマー設定
-        remainingTime =
-            step.timer.toLong()
+        remainingTimeMillis =
+            step.timer * 1000L
 
         updateTimerText()
 
         if (step.timer > 0) {
 
-            startTimerButton.isEnabled = true
-            resetTimerButton.isEnabled = true
+            startTimerButton.text =
+                "開始"
+
+            startTimerButton.isEnabled =
+                true
+
+            resetTimerButton.isEnabled =
+                true
 
         } else {
 
-            timerText.text =
-                "タイマーなし"
+            timerText.text = "タイマーなし"
 
-            startTimerButton.isEnabled = false
-            resetTimerButton.isEnabled = false
+            startTimerButton.isEnabled =
+                false
+
+            resetTimerButton.isEnabled =
+                false
         }
     }
 
@@ -337,25 +350,24 @@ class CookingActivity : AppCompatActivity() {
     private fun startTimer() {
 
         if (
-            remainingTime <= 0 ||
+            remainingTimeMillis <= 0L ||
             timerRunning
         ) {
             return
         }
 
-
         timerRunning = true
 
         startTimerButton.text =
-            "実行中"
+            "停止"
 
         startTimerButton.isEnabled =
-            false
+            true
 
 
         countDownTimer =
             object : CountDownTimer(
-                remainingTime * 1000,
+                remainingTimeMillis,
                 1000
             ) {
 
@@ -363,18 +375,19 @@ class CookingActivity : AppCompatActivity() {
                     millisUntilFinished: Long
                 ) {
 
-                    remainingTime =
-                        millisUntilFinished / 1000
+                    remainingTimeMillis =
+                        millisUntilFinished
 
                     updateTimerText()
                 }
 
-
                 override fun onFinish() {
 
-                    remainingTime = 0
+                    remainingTimeMillis =
+                        0L
 
-                    timerRunning = false
+                    timerRunning =
+                        false
 
                     updateTimerText()
 
@@ -393,6 +406,23 @@ class CookingActivity : AppCompatActivity() {
             }.start()
     }
 
+    // =========================
+    // タイマー一時停止
+    // =========================
+    private fun pauseTimer() {
+
+        countDownTimer?.cancel()
+
+        countDownTimer = null
+
+        timerRunning = false
+
+        startTimerButton.text =
+            "再開"
+
+        startTimerButton.isEnabled =
+            remainingTimeMillis > 0L
+    }
 
     // =========================
     // タイマー停止
@@ -401,17 +431,12 @@ class CookingActivity : AppCompatActivity() {
 
         countDownTimer?.cancel()
 
-        countDownTimer =
-            null
+        countDownTimer = null
 
-        timerRunning =
-            false
+        timerRunning = false
 
         startTimerButton.text =
             "開始"
-
-        startTimerButton.isEnabled =
-            remainingTime > 0
     }
 
 
@@ -420,17 +445,27 @@ class CookingActivity : AppCompatActivity() {
     // =========================
     private fun resetTimer() {
 
-        stopTimer()
+        countDownTimer?.cancel()
 
-        remainingTime =
+        countDownTimer = null
+
+        timerRunning = false
+
+        remainingTimeMillis =
             steps[currentStepIndex]
                 .timer
-                .toLong()
+                .toLong() * 1000L
 
         updateTimerText()
 
+        startTimerButton.text =
+            "開始"
+
         startTimerButton.isEnabled =
-            remainingTime > 0
+            remainingTimeMillis > 0L
+
+        resetTimerButton.isEnabled =
+            remainingTimeMillis > 0L
     }
 
 
@@ -439,7 +474,7 @@ class CookingActivity : AppCompatActivity() {
     // =========================
     private fun updateTimerText() {
 
-        if (remainingTime <= 0) {
+        if (remainingTimeMillis <= 0L) {
 
             timerText.text =
                 "00:00"
@@ -447,13 +482,14 @@ class CookingActivity : AppCompatActivity() {
             return
         }
 
+        val totalSeconds =
+            remainingTimeMillis / 1000L
 
         val minutes =
-            remainingTime / 60
+            totalSeconds / 60
 
         val seconds =
-            remainingTime % 60
-
+            totalSeconds % 60
 
         timerText.text =
             String.format(
