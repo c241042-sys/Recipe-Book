@@ -3,11 +3,9 @@ package com.example.recipebook
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,7 +19,10 @@ class StepEditActivity : AppCompatActivity() {
 
     private lateinit var titleEditText: EditText
     private lateinit var descriptionEditText: EditText
-    private lateinit var timerSpinner: Spinner
+
+    private lateinit var timerMinuteEditText: EditText
+    private lateinit var timerSecondEditText: EditText
+
     private lateinit var stepImage: ImageView
     private lateinit var stepNumberText: TextView
     private lateinit var screenTitle: TextView
@@ -37,6 +38,7 @@ class StepEditActivity : AppCompatActivity() {
     // =========================
     // 画像選択
     // =========================
+
     private val imagePicker =
         registerForActivityResult(
             ActivityResultContracts.OpenDocument()
@@ -87,9 +89,14 @@ class StepEditActivity : AppCompatActivity() {
                 R.id.descriptionEditText
             )
 
-        timerSpinner =
+        timerMinuteEditText =
             findViewById(
-                R.id.timerSpinner
+                R.id.timerMinuteEditText
+            )
+
+        timerSecondEditText =
+            findViewById(
+                R.id.timerSecondEditText
             )
 
         stepImage =
@@ -148,40 +155,6 @@ class StepEditActivity : AppCompatActivity() {
 
 
         // =========================
-        // タイマー
-        // =========================
-
-        val timerItems =
-            arrayOf(
-                "タイマーなし",
-                "30秒",
-                "1分",
-                "2分",
-                "3分",
-                "5分",
-                "10分",
-                "15分",
-                "20分",
-                "30分",
-                "60分"
-            )
-
-        val timerAdapter =
-            ArrayAdapter(
-                this,
-                android.R.layout.simple_spinner_item,
-                timerItems
-            )
-
-        timerAdapter.setDropDownViewResource(
-            android.R.layout.simple_spinner_dropdown_item
-        )
-
-        timerSpinner.adapter =
-            timerAdapter
-
-
-        // =========================
         // 新規追加 / 編集
         // =========================
 
@@ -210,6 +183,10 @@ class StepEditActivity : AppCompatActivity() {
 
             stepNumberText.text =
                 "手順 $nextNumber"
+
+            // 新規の場合は0分0秒
+            timerMinuteEditText.setText("0")
+            timerSecondEditText.setText("0")
         }
 
 
@@ -323,41 +300,22 @@ class StepEditActivity : AppCompatActivity() {
         }
 
 
+        // =========================
         // タイマー
-        setTimerSpinner(
-            step.timer
+        // =========================
+
+        val minutes =
+            step.timer / 60
+
+        val seconds =
+            step.timer % 60
+
+        timerMinuteEditText.setText(
+            minutes.toString()
         )
-    }
 
-
-    // =========================
-    // タイマーSpinner設定
-    // =========================
-
-    private fun setTimerSpinner(
-        timerSeconds: Int
-    ) {
-
-        val position =
-            when (timerSeconds) {
-
-                0 -> 0
-                30 -> 1
-                60 -> 2
-                120 -> 3
-                180 -> 4
-                300 -> 5
-                600 -> 6
-                900 -> 7
-                1200 -> 8
-                1800 -> 9
-                3600 -> 10
-
-                else -> 0
-            }
-
-        timerSpinner.setSelection(
-            position
+        timerSecondEditText.setText(
+            seconds.toString()
         )
     }
 
@@ -366,26 +324,77 @@ class StepEditActivity : AppCompatActivity() {
     // タイマー秒数取得
     // =========================
 
-    private fun getSelectedTimerSeconds(): Int {
+    private fun getTimerSeconds(): Int? {
 
-        return when (
-            timerSpinner.selectedItemPosition
-        ) {
+        val minuteText =
+            timerMinuteEditText.text
+                .toString()
+                .trim()
 
-            0 -> 0
-            1 -> 30
-            2 -> 60
-            3 -> 120
-            4 -> 180
-            5 -> 300
-            6 -> 600
-            7 -> 900
-            8 -> 1200
-            9 -> 1800
-            10 -> 3600
+        val secondText =
+            timerSecondEditText.text
+                .toString()
+                .trim()
 
-            else -> 0
+
+        // 空欄は0として扱う
+        val minutes =
+            if (minuteText.isEmpty()) {
+                0
+            } else {
+                minuteText.toIntOrNull()
+            }
+
+
+        val seconds =
+            if (secondText.isEmpty()) {
+                0
+            } else {
+                secondText.toIntOrNull()
+            }
+
+
+        // 数字として入力できなかった
+        if (minutes == null) {
+
+            timerMinuteEditText.error =
+                "数字を入力してください"
+
+            return null
         }
+
+
+        if (seconds == null) {
+
+            timerSecondEditText.error =
+                "数字を入力してください"
+
+            return null
+        }
+
+
+        // マイナスチェック
+        if (minutes < 0) {
+
+            timerMinuteEditText.error =
+                "0以上を入力してください"
+
+            return null
+        }
+
+
+        // 秒は0～59
+        if (seconds !in 0..59) {
+
+            timerSecondEditText.error =
+                "秒は0～59で入力してください"
+
+            return null
+        }
+
+
+        // 両方0ならタイマーなし
+        return minutes * 60 + seconds
     }
 
 
@@ -424,8 +433,15 @@ class StepEditActivity : AppCompatActivity() {
         }
 
 
+        // タイマー
         val timer =
-            getSelectedTimerSeconds()
+            getTimerSeconds()
+                ?: return
+
+
+        // 画像
+        val imageUri =
+            selectedImageUri?.toString()
 
 
         if (isEditMode) {
@@ -439,10 +455,10 @@ class StepEditActivity : AppCompatActivity() {
                     stepId = stepId,
                     title = title,
                     description = description,
-                    imageUri =
-                        selectedImageUri?.toString(),
+                    imageUri = imageUri,
                     timer = timer
                 )
+
 
             if (result > 0) {
 
@@ -480,10 +496,10 @@ class StepEditActivity : AppCompatActivity() {
                     stepNumber = stepNumber,
                     title = title,
                     description = description,
-                    imageUri =
-                        selectedImageUri?.toString(),
+                    imageUri = imageUri,
                     timer = timer
                 )
+
 
             if (result != -1L) {
 
@@ -514,7 +530,9 @@ class StepEditActivity : AppCompatActivity() {
     private fun showDeleteDialog() {
 
         AlertDialog.Builder(this)
-            .setTitle("手順を削除しますか？")
+            .setTitle(
+                "手順を削除しますか？"
+            )
             .setMessage(
                 "この手順を削除します。"
             )
@@ -545,7 +563,7 @@ class StepEditActivity : AppCompatActivity() {
 
         if (result) {
 
-            // 番号を詰め直す
+            // 手順番号を振り直す
             dbHelper.reorderSteps(
                 recipeId
             )
