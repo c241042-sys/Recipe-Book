@@ -26,6 +26,10 @@ class IngredientActivity : AppCompatActivity() {
             R.layout.activity_ingredient
         )
 
+        BottomNavigation.setup(
+            this, BottomNavigation.Tab.INGREDIENTS
+        )
+
         dbHelper =
             RecipeDBHelper(this)
 
@@ -64,27 +68,17 @@ class IngredientActivity : AppCompatActivity() {
         recyclerView.layoutManager =
             LinearLayoutManager(this)
 
-        // 戻る
-        findViewById<TextView>(
-            R.id.backButton
-        ).setOnClickListener {
-
-            finish()
-        }
-
         // 材料追加
-        findViewById<
-                com.google.android.material.floatingactionbutton.FloatingActionButton
-                >(R.id.addIngredientButton)
-            .setOnClickListener {
-
-                startActivity(
-                    Intent(
-                        this,
-                        IngredientEditActivity::class.java
-                    )
+        findViewById<TextView>(
+            R.id.addIngredientButton
+        ).setOnClickListener {
+            startActivity(
+                Intent(
+                    this,
+                    IngredientEditActivity::class.java
                 )
-            }
+            )
+        }
 
         // 検索
         searchEditText.addTextChangedListener(

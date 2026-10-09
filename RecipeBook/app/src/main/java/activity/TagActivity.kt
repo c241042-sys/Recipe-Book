@@ -83,6 +83,10 @@ class TagActivity : AppCompatActivity() {
             R.layout.activity_tag
         )
 
+        BottomNavigation.setup(
+            this, BottomNavigation.Tab.TAGS
+        )
+
         dbHelper =
             RecipeDBHelper(this)
 
@@ -112,28 +116,17 @@ class TagActivity : AppCompatActivity() {
             LinearLayoutManager(this)
 
 
-        // 戻る
-        findViewById<TextView>(
-            R.id.backButton
-        ).setOnClickListener {
-
-            finish()
-        }
-
-
         // タグ追加
-        findViewById<
-                com.google.android.material.floatingactionbutton.FloatingActionButton
-                >(R.id.addTagButton)
-            .setOnClickListener {
-
-                startActivity(
-                    Intent(
-                        this,
-                        TagEditActivity::class.java
-                    )
+        findViewById<TextView>(
+            R.id.addTagButton
+        ).setOnClickListener {
+            startActivity(
+                Intent(
+                    this,
+                    TagEditActivity::class.java
                 )
-            }
+            )
+        }
 
 
         // 検索

@@ -4,7 +4,9 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.HorizontalScrollView
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipebook.R
@@ -30,27 +32,22 @@ class RecipeAdapter(
         val time: TextView =
             itemView.findViewById(R.id.recipeTime)
 
-        val tags: TextView =
-            itemView.findViewById(R.id.recipeTags)
+        val tagsScroll: HorizontalScrollView =
+            itemView.findViewById(R.id.recipeTagsScroll)
+
+        val tagsContainer: LinearLayout =
+            itemView.findViewById(R.id.recipeTagsContainer)
 
         val favoriteMark: TextView =
-            itemView.findViewById(
-                R.id.favoriteMark
-            )
+            itemView.findViewById(R.id.favoriteMark)
     }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): RecipeViewHolder {
-
-        val view =
-            LayoutInflater.from(parent.context)
-                .inflate(
-                    R.layout.item_recipe,
-                    parent,
-                    false
-                )
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_recipe, parent, false)
 
         return RecipeViewHolder(view)
     }
@@ -59,61 +56,69 @@ class RecipeAdapter(
         holder: RecipeViewHolder,
         position: Int
     ) {
-
         val recipe = recipeList[position]
 
-        // 画像
+        // レシピ画像
         if (!recipe.imageUri.isNullOrEmpty()) {
-
-            holder.image.setImageURI(
-                Uri.parse(recipe.imageUri)
-            )
-
+            holder.image.setImageURI(Uri.parse(recipe.imageUri))
         } else {
-
             holder.image.setImageResource(
                 R.drawable.recipe_placeholder
             )
         }
 
-        // 名前
-        holder.name.text =
-            recipe.name
+        // レシピ名・説明・調理時間
+        holder.name.text = recipe.name
+        holder.description.text = recipe.description
+        holder.time.text = "◷ ${recipe.cookTime}分"
 
-        // 説明
-        holder.description.text =
-            recipe.description
+        // タグを丸いラベルとして表示
+        holder.tagsContainer.removeAllViews()
 
-        // 調理時間
-        holder.time.text =
-            "◷ ${recipe.cookTime}分"
-
-        // タグ
         if (recipe.tags.isEmpty()) {
-
-            holder.tags.text = ""
-
+            holder.tagsScroll.visibility = View.GONE
         } else {
+            holder.tagsScroll.visibility = View.VISIBLE
 
-            holder.tags.text =
-                recipe.tags.joinToString("   ")
+            val density =
+                holder.itemView.resources.displayMetrics.density
+
+            recipe.tags.forEach { tag ->
+                val chip = TextView(holder.itemView.context).apply {
+                    text = tag
+                    textSize = 10f
+                    setTextColor(
+                        android.graphics.Color.parseColor("#98651F")
+                    )
+                    setPadding(
+                        (8 * density).toInt(),
+                        (4 * density).toInt(),
+                        (8 * density).toInt(),
+                        (4 * density).toInt()
+                    )
+                    setBackgroundResource(
+                        R.drawable.tag_chip_background
+                    )
+                    maxLines = 1
+                }
+
+                val params = LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    marginEnd = (5 * density).toInt()
+                }
+
+                holder.tagsContainer.addView(chip, params)
+            }
         }
 
-        // お気に入り
-        if (recipe.favorite) {
+        // お気に入りマーク
+        holder.favoriteMark.visibility =
+            if (recipe.favorite) View.VISIBLE else View.GONE
 
-            holder.favoriteMark.visibility =
-                View.VISIBLE
-
-        } else {
-
-            holder.favoriteMark.visibility =
-                View.GONE
-        }
-
-        // タップ
+        // カードを押すとレシピ詳細へ移動
         holder.itemView.setOnClickListener {
-
             onItemClick(recipe)
         }
     }
@@ -122,12 +127,8 @@ class RecipeAdapter(
         return recipeList.size
     }
 
-    fun updateList(
-        newList: List<Recipe>
-    ) {
-
+    fun updateList(newList: List<Recipe>) {
         recipeList = newList
-
         notifyDataSetChanged()
     }
 }

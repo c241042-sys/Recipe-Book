@@ -1,96 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="10dp"
-    android:background="#FFFFFF"
-    android:layout_marginBottom="6dp">
+    android:layout_marginBottom="8dp"
+    app:cardBackgroundColor="#FFFFFF"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    app:strokeColor="#F1E9DE"
+    app:strokeWidth="1dp">
 
-    <!-- レシピ画像 -->
-    <ImageView
-        android:id="@+id/recipeImage"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/recipe_placeholder" />
-
-    <!-- レシピ情報 -->
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:paddingStart="12dp">
+        android:orientation="horizontal"
+        android:padding="9dp"
+        android:gravity="center_vertical"
+        android:background="#FFFFFF">
 
-        <!-- レシピ名 + お気に入り -->
+        <!-- レシピ画像 -->
+        <ImageView
+            android:id="@+id/recipeImage"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@drawable/recipe_image_background"
+            android:clipToOutline="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/recipe_placeholder"
+            android:contentDescription="レシピ画像" />
+
+        <!-- レシピ情報 -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:orientation="vertical">
 
-            <!-- レシピ名 -->
-            <TextView
-                android:id="@+id/recipeName"
-                android:layout_width="0dp"
+            <!-- 名前とお気に入り -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="トマトとバジルのパスタ"
-                android:textSize="17sp"
-                android:textStyle="bold"
-                android:textColor="#222222"
-                android:maxLines="1"
-                android:ellipsize="end" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-            <!-- お気に入り -->
+                <TextView
+                    android:id="@+id/recipeName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    android:text="トマトとバジルのパスタ"
+                    android:textColor="#262626"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/favoriteMark"
+                    android:layout_width="26dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="♥"
+                    android:textColor="#F04444"
+                    android:textSize="21sp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+            <!-- 説明 -->
             <TextView
-                android:id="@+id/favoriteMark"
-                android:layout_width="30dp"
+                android:id="@+id/recipeDescription"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="♥"
-                android:textSize="20sp"
-                android:textColor="#E74C3C"
-                android:visibility="gone" />
+                android:layout_marginTop="5dp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:text="フレッシュなトマトとバジルのシンプルパスタ。"
+                android:textColor="#686868"
+                android:textSize="12sp" />
+
+            <!-- 調理時間とタグ -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/recipeTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:text="◷ 20分"
+                    android:textColor="#555555"
+                    android:textSize="11sp" />
+
+                <HorizontalScrollView
+                    android:id="@+id/recipeTagsScroll"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:scrollbars="none"
+                    android:fillViewport="false">
+
+                    <LinearLayout
+                        android:id="@+id/recipeTagsContainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal" />
+
+                </HorizontalScrollView>
+
+            </LinearLayout>
 
         </LinearLayout>
 
-        <!-- 説明 -->
-        <TextView
-            android:id="@+id/recipeDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="フレッシュなトマトとバジルのシンプルパスタ。"
-            android:textSize="13sp"
-            android:textColor="#666666"
-            android:maxLines="2"
-            android:ellipsize="end" />
-
-        <!-- 調理時間 -->
-        <TextView
-            android:id="@+id/recipeTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="◷ 20分"
-            android:textSize="12sp"
-            android:textColor="#555555" />
-
-        <!-- タグ -->
-        <TextView
-            android:id="@+id/recipeTags"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:maxLines="1"
-            android:text="パスタ　トマト"
-            android:textColor="#E67E22"
-            android:textSize="11sp" />
-
     </LinearLayout>
 
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -29,6 +29,10 @@ class FavoriteActivity : AppCompatActivity() {
             R.layout.activity_favorite
         )
 
+        BottomNavigation.setup(
+            this, BottomNavigation.Tab.FAVORITES
+        )
+
         dbHelper =
             RecipeDBHelper(this)
 
@@ -69,15 +73,6 @@ class FavoriteActivity : AppCompatActivity() {
 
         recyclerView.layoutManager =
             LinearLayoutManager(this)
-
-
-        // 戻る
-        findViewById<TextView>(
-            R.id.backButton
-        ).setOnClickListener {
-
-            finish()
-        }
     }
 
 

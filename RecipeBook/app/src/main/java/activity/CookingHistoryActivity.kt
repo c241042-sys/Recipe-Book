@@ -27,6 +27,10 @@ class CookingHistoryActivity : AppCompatActivity() {
             R.layout.activity_cooking_history
         )
 
+        BottomNavigation.setup(
+            this, BottomNavigation.Tab.HISTORY
+        )
+
         dbHelper =
             RecipeDBHelper(this)
 
@@ -52,15 +56,6 @@ class CookingHistoryActivity : AppCompatActivity() {
 
         recyclerView.layoutManager =
             LinearLayoutManager(this)
-
-
-        // 戻る
-        findViewById<TextView>(
-            R.id.backButton
-        ).setOnClickListener {
-
-            finish()
-        }
     }
 
 
